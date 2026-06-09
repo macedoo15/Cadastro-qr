@@ -3,25 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cadastro de Cliente</title>
+  <title>Cadastro de Cliente | Bem Brasil</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <style>
     :root {
-      --bg: #eef3f1;
-      --bg-2: #dcebe5;
-      --surface: rgba(255, 255, 255, 0.82);
-      --surface-strong: #ffffff;
-      --text: #102019;
-      --muted: #5d6e66;
-      --line: rgba(16, 32, 25, 0.08);
-      --accent: #0f8a67;
-      --accent-2: #18b07f;
-      --danger: #da4d49;
-      --shadow: 0 24px 70px rgba(16, 32, 25, 0.14);
-      --shadow-soft: 0 10px 30px rgba(16, 32, 25, 0.08);
+      --bg: #0d5a22;
+      --bg-2: #0f6a28;
+      --surface: rgba(21, 94, 38, 0.92);
+      --surface-strong: #156224;
+      --text: #f7f1d7;
+      --muted: #bbd09b;
+      --line: rgba(201, 160, 54, 0.26);
+      --accent: #d8ac32;
+      --accent-2: #f1cf63;
+      --accent-3: #8a6515;
+      --danger: #ff806f;
+      --shadow: 0 24px 60px rgba(3, 30, 8, 0.36);
+      --shadow-soft: 0 10px 24px rgba(3, 30, 8, 0.22);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,14 +36,14 @@
       font-family: 'DM Sans', sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(24, 176, 127, 0.18), transparent 30%),
-        radial-gradient(circle at top right, rgba(15, 138, 103, 0.16), transparent 26%),
-        linear-gradient(180deg, #f8fbfa 0%, var(--bg) 55%, #e7efeb 100%);
+        radial-gradient(circle at top center, rgba(212, 171, 54, 0.15), transparent 18%),
+        radial-gradient(circle at 20% 80%, rgba(241, 207, 99, 0.08), transparent 22%),
+        linear-gradient(180deg, #0a4d1c 0%, var(--bg) 36%, #084017 100%);
       min-height: 100vh;
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding: 2.2rem 1rem;
+      padding: 0;
       position: relative;
       overflow-x: hidden;
     }
@@ -58,19 +60,19 @@
     }
 
     body::before {
-      width: 280px;
-      height: 280px;
-      right: -120px;
-      top: 80px;
-      background: rgba(24, 176, 127, 0.12);
+      width: 360px;
+      height: 360px;
+      right: -140px;
+      top: -80px;
+      background: rgba(212, 171, 54, 0.08);
     }
 
     body::after {
-      width: 220px;
-      height: 220px;
-      left: -90px;
-      bottom: 70px;
-      background: rgba(16, 32, 25, 0.08);
+      width: 260px;
+      height: 260px;
+      left: -120px;
+      bottom: -60px;
+      background: rgba(255, 255, 255, 0.04);
     }
 
     .wrap {
@@ -78,31 +80,62 @@
       width: 100%;
       position: relative;
       z-index: 1;
+      min-height: 100vh;
+      padding: 0 1rem 1.25rem;
     }
 
     .logo-area {
+      background: linear-gradient(180deg, #0f6b28 0%, #0d5a22 100%);
+      border-bottom: 3px solid var(--accent);
+      padding: 1.2rem 1rem 1.45rem;
+      margin: 0 -1rem 1.25rem;
       text-align: center;
-      margin-bottom: 1.75rem;
       animation: fadeUp 0.7s ease both;
     }
 
-    .logo-circle {
-      width: 68px;
-      height: 68px;
-      border-radius: 22px;
-      margin: 0 auto 14px;
+    .brand-mark {
+      width: 88px;
+      height: 88px;
+      border-radius: 0;
+      margin: 0 auto 0.8rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-      box-shadow: 0 16px 34px rgba(15, 138, 103, 0.28);
+      color: var(--accent);
+      background: transparent;
+      box-shadow: none;
+      border: none;
+      position: relative;
+      overflow: hidden;
     }
 
-    .logo-circle i { font-size: 30px; }
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      padding: 0;
+    }
+
+    .brand-mark span {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.15rem;
+      font-weight: 700;
+      transform: translateY(1px);
+    }
+
+    .brand-kicker {
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.65rem;
+    }
 
     .form-title {
       font-size: clamp(1.7rem, 4vw, 2.2rem);
+      font-family: 'Playfair Display', serif;
       font-weight: 700;
       letter-spacing: -0.03em;
       color: var(--text);
@@ -110,7 +143,7 @@
 
     .form-subtitle {
       font-size: 1rem;
-      color: var(--muted);
+      color: #d6e7c6;
       margin-top: 0.35rem;
       line-height: 1.5;
     }
@@ -119,31 +152,31 @@
       display: flex;
       gap: 8px;
       justify-content: center;
-      margin-bottom: 1.2rem;
+      margin: 0 0 1.1rem;
       animation: fadeUp 0.8s ease both;
       animation-delay: 0.08s;
     }
 
     .progress-dot {
-      width: 34px;
+      width: 160px;
       height: 8px;
       border-radius: 999px;
-      background: rgba(16, 32, 25, 0.12);
+      background: rgba(216, 172, 50, 0.22);
       transition: all 0.25s ease;
     }
 
     .progress-dot.active {
-      width: 46px;
-      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
-      box-shadow: 0 8px 20px rgba(15, 138, 103, 0.25);
+      width: 160px;
+      background: linear-gradient(90deg, var(--accent-3) 0%, var(--accent) 55%, var(--accent-2) 100%);
+      box-shadow: 0 8px 18px rgba(216, 172, 50, 0.24);
     }
 
     .card {
       background: var(--surface);
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--line);
-      border-radius: 24px;
-      padding: 1.35rem;
+      border-radius: 16px;
+      padding: 1.15rem;
       margin-bottom: 1rem;
       box-shadow: var(--shadow);
       animation: fadeUp 0.85s ease both;
@@ -159,11 +192,12 @@
       display: flex;
       align-items: center;
       gap: 0.45rem;
-      font-size: 0.84rem;
-      color: var(--muted);
+      font-size: 0.76rem;
+      color: var(--accent);
       margin-bottom: 0.55rem;
       font-weight: 700;
-      letter-spacing: 0.01em;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
     }
 
     .field label i { font-size: 1rem; color: var(--accent); }
@@ -171,21 +205,21 @@
     .field input {
       width: 100%;
       padding: 0 14px;
-      height: 48px;
+      height: 42px;
       font-size: 1rem;
-      background: rgba(255, 255, 255, 0.88);
-      border: 1px solid rgba(16, 32, 25, 0.12);
-      border-radius: 14px;
-      color: var(--text);
+      background: #373132;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      color: #f5efe0;
       transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s, background 0.2s;
       outline: none;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     .field input:focus {
-      border-color: rgba(15, 138, 103, 0.5);
-      box-shadow: 0 0 0 4px rgba(15, 138, 103, 0.12);
-      background: #fff;
+      border-color: rgba(216, 172, 50, 0.65);
+      box-shadow: 0 0 0 3px rgba(216, 172, 50, 0.14);
+      background: #3d3738;
       transform: translateY(-1px);
     }
 
@@ -193,7 +227,7 @@
 
     .err-msg {
       font-size: 0.78rem;
-      color: #9e3633;
+      color: #ff9a8f;
       margin-top: 0.38rem;
       display: none;
     }
@@ -216,11 +250,11 @@
 
     .btn-submit {
       width: 100%;
-      height: 50px;
-      background: linear-gradient(135deg, var(--accent) 0%, #0b6f55 100%);
+      height: 48px;
+      background: transparent;
       color: #fff;
-      border: none;
-      border-radius: 16px;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
@@ -230,22 +264,22 @@
       gap: 0.55rem;
       transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
       margin-top: 1.15rem;
-      box-shadow: 0 16px 34px rgba(15, 138, 103, 0.28);
+      box-shadow: none;
     }
 
-    .btn-submit:hover { filter: brightness(1.03); transform: translateY(-1px); }
+    .btn-submit:hover { filter: brightness(1.06); transform: translateY(-1px); background: rgba(216, 172, 50, 0.08); }
 
     .btn-submit:active { transform: translateY(0) scale(0.99); }
 
-    .btn-submit:disabled { background: linear-gradient(135deg, #9dd8c4 0%, #8dc5b3 100%); cursor: not-allowed; box-shadow: none; }
+    .btn-submit:disabled { background: rgba(255, 255, 255, 0.1); cursor: not-allowed; box-shadow: none; }
 
     .alert-erro {
-      background: rgba(218, 77, 73, 0.1);
-      border: 1px solid rgba(218, 77, 73, 0.22);
-      border-radius: 16px;
+      background: rgba(255, 140, 120, 0.1);
+      border: 1px solid rgba(255, 140, 120, 0.2);
+      border-radius: 12px;
       padding: 12px 14px;
       font-size: 0.86rem;
-      color: #8d2e2b;
+      color: #ffd8d3;
       margin-top: 1rem;
       align-items: center;
       gap: 8px;
@@ -258,10 +292,10 @@
       text-align: center;
       padding: 3.5rem 1.25rem;
       display: none;
-      background: var(--surface);
-      backdrop-filter: blur(16px);
+      background: rgba(15, 100, 34, 0.92);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--line);
-      border-radius: 28px;
+      border-radius: 20px;
       box-shadow: var(--shadow);
       animation: fadeUp 0.8s ease both;
     }
@@ -269,18 +303,19 @@
     .success-circle {
       width: 82px;
       height: 82px;
-      border-radius: 24px;
-      background: linear-gradient(135deg, rgba(24, 176, 127, 0.16), rgba(15, 138, 103, 0.08));
+      border-radius: 50%;
+      background: rgba(216, 172, 50, 0.16);
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 20px;
     }
 
-    .success-circle i { font-size: 38px; color: var(--accent); }
+    .success-circle i { font-size: 38px; color: var(--accent-2); }
 
     .success-title {
       font-size: clamp(1.6rem, 4vw, 2rem);
+      font-family: 'Playfair Display', serif;
       font-weight: 700;
       color: var(--text);
       margin-bottom: 0.55rem;
@@ -289,7 +324,7 @@
 
     .success-sub {
       font-size: 1rem;
-      color: var(--muted);
+      color: #d2e0bf;
       line-height: 1.7;
     }
 
@@ -315,46 +350,45 @@
       }
 
       .logo-area {
-        margin-bottom: 1.1rem;
+        padding: 1rem 0.9rem 1.2rem;
       }
 
-      .logo-circle {
-        width: 60px;
-        height: 60px;
-        border-radius: 18px;
+      .brand-mark {
+        width: 82px;
+        height: 82px;
         margin-bottom: 0.9rem;
       }
 
-      .logo-circle i {
-        font-size: 26px;
+      .brand-mark span {
+        font-size: 2rem;
       }
 
       .form-title {
-        font-size: clamp(1.45rem, 7vw, 1.85rem);
+        font-size: clamp(1.55rem, 7vw, 1.95rem);
       }
 
       .form-subtitle {
-        font-size: 0.92rem;
-        padding: 0 0.4rem;
+        font-size: 0.9rem;
+        padding: 0 0.2rem;
       }
 
       .progress {
-        margin-bottom: 1rem;
+        margin-bottom: 0.95rem;
       }
 
       .progress-dot {
-        width: 24px;
+        width: 88px;
         height: 7px;
       }
 
       .progress-dot.active {
-        width: 36px;
+        width: 88px;
       }
 
       .card {
         padding: 1rem;
-        border-radius: 18px;
-        box-shadow: 0 12px 30px rgba(16, 32, 25, 0.08);
+        border-radius: 16px;
+        box-shadow: 0 12px 26px rgba(3, 30, 8, 0.26);
       }
 
       .field {
@@ -362,7 +396,7 @@
       }
 
       .field input {
-        height: 46px;
+        height: 44px;
         font-size: 0.96rem;
       }
 
@@ -372,14 +406,14 @@
       }
 
       .btn-submit {
-        height: 48px;
+        height: 46px;
         font-size: 0.98rem;
-        border-radius: 14px;
+        border-radius: 8px;
       }
 
       .success-wrap {
         padding: 2.6rem 1rem;
-        border-radius: 22px;
+        border-radius: 18px;
       }
 
       .success-circle {
@@ -402,9 +436,13 @@
 
 <div class="wrap">
   <div class="logo-area">
-    <div class="logo-circle"><i class="ti ti-id"></i></div>
+    <div class="brand-mark" aria-label="Bem Brasil Restaurante">
+      <img src="logo.png" alt="Logo do Bem Brasil Restaurante" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+      <span style="display:none;">BB</span>
+    </div>
+    <p class="brand-kicker">Bem Brasil Restaurante</p>
     <p class="form-title">Complete seu cadastro</p>
-    <p class="form-subtitle">Preencha os dados abaixo para continuar</p>
+    <p class="form-subtitle">Preencha os dados abaixo para continuar seu atendimento no Bem Brasil.</p>
   </div>
 
   <div class="progress">
@@ -415,6 +453,9 @@
 
   <div id="form-wrap">
     <div class="card">
+      <div class="field" style="margin-bottom: 1.1rem;">
+        <label><i class="ti ti-user-circle"></i> Dados pessoais</label>
+      </div>
       <div class="field">
         <label><i class="ti ti-user"></i> Nome completo</label>
         <input type="text" id="nome" placeholder="Ex: Maria Silva" autocomplete="name" />
@@ -428,6 +469,9 @@
     </div>
 
     <div class="card">
+      <div class="field" style="margin-bottom: 1.1rem;">
+        <label><i class="ti ti-id"></i> Identificação</label>
+      </div>
       <div class="field">
         <label><i class="ti ti-id-badge"></i> CPF</label>
         <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" />
@@ -465,7 +509,7 @@
   <div class="success-wrap" id="success">
     <div class="success-circle"><i class="ti ti-check"></i></div>
     <p class="success-title">Cadastro realizado!</p>
-    <p class="success-sub">Obrigado pelo cadastro.<br>Suas informações foram salvas com sucesso.</p>
+    <p class="success-sub">Obrigado pelo cadastro.<br>Suas informações foram salvas com sucesso no Bem Brasil.</p>
   </div>
 </div>
 
