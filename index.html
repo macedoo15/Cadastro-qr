@@ -328,6 +328,54 @@
       line-height: 1.7;
     }
 
+    .footer-social {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      margin: 1rem 0 0.25rem;
+      padding: 0.9rem 0 0;
+      border-top: 1px solid rgba(216, 172, 50, 0.24);
+      color: #d9e8c8;
+      flex-wrap: wrap;
+    }
+
+    .footer-social a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .footer-social .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .footer-social .social-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(216, 172, 50, 0.14);
+      border: 1px solid rgba(216, 172, 50, 0.32);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .footer-social .social-icon i {
+      font-size: 1.05rem;
+      color: var(--accent-2);
+    }
+
+    .footer-social a:hover .social-icon {
+      transform: translateY(-1px);
+      background: rgba(216, 172, 50, 0.22);
+    }
+
     @keyframes fadeUp {
       from {
         opacity: 0;
@@ -511,6 +559,13 @@
     <p class="success-title">Cadastro realizado!</p>
     <p class="success-sub">Obrigado pelo cadastro.<br>Suas informações foram salvas com sucesso no Bem Brasil.</p>
   </div>
+
+  <footer class="footer-social" aria-label="Redes sociais do Bem Brasil">
+    <a class="social-link" href="https://www.instagram.com/oficialbembrasil/" target="_blank" rel="noopener noreferrer" aria-label="Abrir Instagram oficial do Bem Brasil">
+      <span class="social-icon"><i class="ti ti-brand-instagram"></i></span>
+      <span>@oficialbembrasil</span>
+    </a>
+  </footer>
 </div>
 
 <script>
