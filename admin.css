@@ -65,10 +65,12 @@ body {
 }
 
 .login-logo-circle {
-  width: 60px;
-  height: 60px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
-  background: var(--green-soft);
+  background: #fff;
+  border: 1px solid var(--green-soft);
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -76,6 +78,13 @@ body {
 }
 
 .login-logo-circle i { font-size: 28px; color: var(--green); }
+
+.login-logo-img {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  display: block;
+}
 
 .login-title {
   font-size: 20px;
