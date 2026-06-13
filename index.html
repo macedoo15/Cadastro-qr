@@ -345,6 +345,24 @@
       text-decoration: none;
     }
 
+    .footer-social .admin-access {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(216, 172, 50, 0.24);
+      color: var(--accent-2);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .footer-social .admin-access:hover {
+      transform: translateY(-1px);
+      background: rgba(216, 172, 50, 0.16);
+    }
+
     .footer-social .social-link {
       display: inline-flex;
       align-items: center;
@@ -564,6 +582,9 @@
     <a class="social-link" href="https://www.instagram.com/oficialbembrasil/" target="_blank" rel="noopener noreferrer" aria-label="Abrir Instagram oficial do Bem Brasil">
       <span class="social-icon"><i class="ti ti-brand-instagram"></i></span>
       <span>@oficialbembrasil</span>
+    </a>
+    <a class="admin-access" href="login.html" aria-label="Acessar painel administrativo" title="Painel administrativo">
+      <i class="ti ti-shield-lock"></i>
     </a>
   </footer>
 </div>

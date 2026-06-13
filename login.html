@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Painel Admin</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body class="login-page">
+
+  <div class="login-wrap">
+    <div class="login-card">
+
+      <div class="login-logo">
+        <div class="login-logo-circle">
+          <i class="ti ti-shield-lock"></i>
+        </div>
+        <h1 class="login-title">Painel Administrativo</h1>
+        <p class="login-subtitle">Acesso restrito ao proprietário</p>
+      </div>
+
+      <div class="field">
+        <label><i class="ti ti-mail"></i> E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email" />
+      </div>
+
+      <div class="field">
+        <label><i class="ti ti-lock"></i> Senha</label>
+        <div class="input-pw-wrap">
+          <input type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password" />
+          <button class="btn-toggle-pw" onclick="toggleSenha()" title="Mostrar senha">
+            <i class="ti ti-eye" id="pw-icon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="alert-erro" id="login-erro" style="display:none;">
+        <i class="ti ti-alert-circle"></i>
+        <span id="login-erro-msg">E-mail ou senha incorretos.</span>
+      </div>
+
+      <button class="btn-primary" id="btn-login" onclick="fazerLogin()">
+        <i class="ti ti-login"></i> Entrar
+      </button>
+
+    </div>
+  </div>
+
+  <!-- SDK Supabase (apenas uma vez) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js"></script>
+  <script>
+    // Redireciona se já estiver logado
+    supabaseClient.auth.getSession().then(({ data }) => {
+      if (data.session) window.location.href = 'admin.html';
+    });
+
+    function toggleSenha() {
+      const inp = document.getElementById('login-senha');
+      const ico = document.getElementById('pw-icon');
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        ico.className = 'ti ti-eye-off';
+      } else {
+        inp.type = 'password';
+        ico.className = 'ti ti-eye';
+      }
+    }
+
+    document.getElementById('login-senha').addEventListener('keydown', e => {
+      if (e.key === 'Enter') fazerLogin();
+    });
+
+    async function fazerLogin() {
+      const email = document.getElementById('login-email').value.trim();
+      const senha = document.getElementById('login-senha').value;
+      const erro  = document.getElementById('login-erro');
+      const btn   = document.getElementById('btn-login');
+
+      erro.style.display = 'none';
+
+      if (!email || !senha) {
+        document.getElementById('login-erro-msg').textContent = 'Preencha e-mail e senha.';
+        erro.style.display = 'flex';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="ti ti-loader-2 spin"></i> Entrando...';
+
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password: senha });
+
+      if (error) {
+        document.getElementById('login-erro-msg').textContent = 'E-mail ou senha incorretos.';
+        erro.style.display = 'flex';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ti ti-login"></i> Entrar';
+      } else {
+        window.location.href = 'admin.html';
+      }
+    }
+  </script>
+</body>
+</html>
