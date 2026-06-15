@@ -4,13 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel Admin — Cadastros</title>
-  <link rel="icon" type="image/png" href="favicon.png" />
-  <link rel="apple-touch-icon" href="logo.png" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <link rel="stylesheet" href="admin.css" />
 </head>
 <body class="admin-page">
 
+  <!-- Header -->
   <header class="admin-header">
     <div class="header-left">
       <div class="header-logo"><i class="ti ti-database"></i></div>
@@ -20,74 +19,142 @@
       </div>
     </div>
     <div class="header-right">
-      <span class="realtime-badge" id="realtime-badge">
-        <span class="dot"></span> Ao vivo
-      </span>
-      <button class="btn-icon" onclick="carregarCadastros()" title="Atualizar">
-        <i class="ti ti-refresh" id="icon-refresh"></i>
-      </button>
-      <button class="btn-icon btn-danger-soft" onclick="sair()" title="Sair">
-        <i class="ti ti-logout"></i>
-      </button>
+      <span class="realtime-badge" id="realtime-badge"><span class="dot"></span> Ao vivo</span>
+      <button class="btn-icon" onclick="carregarCadastros()" title="Atualizar"><i class="ti ti-refresh" id="icon-refresh"></i></button>
+      <button class="btn-icon btn-danger-soft" onclick="sair()" title="Sair"><i class="ti ti-logout"></i></button>
     </div>
   </header>
 
   <main class="admin-main">
 
+    <!-- Estatísticas -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon green"><i class="ti ti-users"></i></div>
-        <div>
-          <p class="stat-label">Total de cadastros</p>
-          <p class="stat-value" id="total-cadastros">—</p>
-        </div>
+        <div><p class="stat-label">Total de cadastros</p><p class="stat-value" id="total-cadastros">—</p></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon blue"><i class="ti ti-calendar-plus"></i></div>
-        <div>
-          <p class="stat-label">Hoje</p>
-          <p class="stat-value" id="total-hoje">—</p>
-        </div>
+        <div><p class="stat-label">Cadastros hoje</p><p class="stat-value" id="total-hoje">—</p></div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon purple"><i class="ti ti-calendar-week"></i></div>
-        <div>
-          <p class="stat-label">Essa semana</p>
-          <p class="stat-value" id="total-semana">—</p>
-        </div>
+        <div class="stat-icon purple"><i class="ti ti-cake"></i></div>
+        <div><p class="stat-label">Aniversariantes do mês</p><p class="stat-value" id="total-aniv-mes">—</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="ti ti-star"></i></div>
+        <div><p class="stat-label">Aniversariantes hoje</p><p class="stat-value" id="total-aniv-hoje">—</p></div>
       </div>
     </div>
 
+    <!-- Busca -->
     <div class="toolbar">
       <div class="toolbar-search">
         <div class="search-field">
           <i class="ti ti-search"></i>
-          <input type="text" id="busca-nome" placeholder="Buscar por nome..." oninput="filtrar()" />
+          <input type="text" id="busca-nome" placeholder="Buscar por nome..." oninput="aplicarFiltros()" />
         </div>
         <div class="search-field">
-          <i class="ti ti-id-badge"></i>
-          <input type="text" id="busca-cpf" placeholder="Buscar por CPF..." oninput="filtrar()" maxlength="14" />
+          <i class="ti ti-mail"></i>
+          <input type="text" id="busca-email" placeholder="Buscar por e-mail..." oninput="aplicarFiltros()" />
         </div>
-      </div>
-      <div class="toolbar-actions">
-        <button class="btn-secondary" onclick="exportarCSV()">
-          <i class="ti ti-table-export"></i> Exportar CSV
-        </button>
+        <div class="search-field">
+          <i class="ti ti-phone"></i>
+          <input type="text" id="busca-tel" placeholder="Buscar por telefone..." oninput="aplicarFiltros()" />
+        </div>
       </div>
     </div>
 
+    <!-- Filtros avançados -->
+    <div class="filtros-card">
+      <div class="filtros-header" onclick="toggleFiltros()">
+        <span><i class="ti ti-filter"></i> Filtros avançados</span>
+        <i class="ti ti-chevron-down" id="filtros-chevron"></i>
+      </div>
+      <div class="filtros-body" id="filtros-body">
+
+        <!-- Período de cadastro -->
+        <div class="filtro-grupo">
+          <p class="filtro-titulo">Período de cadastro</p>
+          <div class="filtro-chips">
+            <button class="chip" data-filtro="periodo" data-val="hoje"    onclick="selecionarChip(this)">Hoje</button>
+            <button class="chip" data-filtro="periodo" data-val="7dias"   onclick="selecionarChip(this)">Últimos 7 dias</button>
+            <button class="chip" data-filtro="periodo" data-val="30dias"  onclick="selecionarChip(this)">Últimos 30 dias</button>
+            <button class="chip" data-filtro="periodo" data-val="custom"  onclick="selecionarChip(this)">Personalizado</button>
+          </div>
+          <div class="filtro-custom-datas" id="custom-datas" style="display:none;">
+            <input type="date" id="data-inicio" onchange="aplicarFiltros()" placeholder="De" />
+            <span>até</span>
+            <input type="date" id="data-fim" onchange="aplicarFiltros()" placeholder="Até" />
+          </div>
+        </div>
+
+        <!-- Aniversariantes -->
+        <div class="filtro-grupo">
+          <p class="filtro-titulo">Aniversariantes</p>
+          <div class="filtro-chips">
+            <button class="chip" data-filtro="aniv" data-val="aniv-hoje"   onclick="selecionarChip(this)">Hoje</button>
+            <button class="chip" data-filtro="aniv" data-val="aniv-semana" onclick="selecionarChip(this)">Essa semana</button>
+            <button class="chip" data-filtro="aniv" data-val="aniv-mes"    onclick="selecionarChip(this)">Esse mês</button>
+          </div>
+          <div class="filtro-chips" style="margin-top:6px;">
+            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-1"  onclick="selecionarChip(this)">Jan</button>
+            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-2"  onclick="selecionarChip(this)">Fev</button>
+            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-3"  onclick="selecionarChip(this)">Mar</button>
+            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-4"  onclick="selecionarChip(this)">Abr</button>
+            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-5"  onclick="selecionarChip(this)">Mai</button>
+            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-6"  onclick="selecionarChip(this)">Jun</button>
+            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-7"  onclick="selecionarChip(this)">Jul</button>
+            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-8"  onclick="selecionarChip(this)">Ago</button>
+            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-9"  onclick="selecionarChip(this)">Set</button>
+            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-10" onclick="selecionarChip(this)">Out</button>
+            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-11" onclick="selecionarChip(this)">Nov</button>
+            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-12" onclick="selecionarChip(this)">Dez</button>
+          </div>
+        </div>
+
+        <div class="filtros-actions">
+          <button class="btn-secondary" onclick="limparFiltros()"><i class="ti ti-x"></i> Limpar filtros</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Resultado + Exportação -->
+    <div class="toolbar toolbar-result">
+      <p class="resultado-label" id="resultado-label">Carregando...</p>
+      <div class="toolbar-actions">
+        <div class="export-group">
+          <button class="btn-secondary" onclick="abrirExport()">
+            <i class="ti ti-table-export"></i> Exportar <i class="ti ti-chevron-down"></i>
+          </button>
+          <div class="export-menu" id="export-menu" style="display:none;">
+            <button onclick="exportar('todos','csv')"><i class="ti ti-file-text"></i> Todos — CSV</button>
+            <button onclick="exportar('todos','xlsx')"><i class="ti ti-file-spreadsheet"></i> Todos — Excel</button>
+            <div class="export-divider"></div>
+            <button onclick="exportar('filtrados','csv')"><i class="ti ti-filter"></i> Filtrados — CSV</button>
+            <button onclick="exportar('filtrados','xlsx')"><i class="ti ti-filter"></i> Filtrados — Excel</button>
+            <div class="export-divider"></div>
+            <button onclick="exportar('aniv-hoje','csv')"><i class="ti ti-cake"></i> Aniv. hoje — CSV</button>
+            <button onclick="exportar('aniv-semana','csv')"><i class="ti ti-cake"></i> Aniv. semana — CSV</button>
+            <button onclick="exportar('aniv-mes','csv')"><i class="ti ti-cake"></i> Aniv. mês — CSV</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela -->
     <div class="table-card">
       <div class="table-wrap">
-        <table class="data-table" id="tabela">
+        <table class="data-table">
           <thead>
             <tr>
               <th>#</th>
-              <th>Nome</th>
-              <th>E-mail</th>
-              <th>CPF</th>
-              <th>Nascimento</th>
+              <th class="sortable" onclick="ordenar('nome')">Nome <i class="ti ti-arrows-sort" id="sort-nome"></i></th>
+              <th class="sortable" onclick="ordenar('email')">E-mail <i class="ti ti-arrows-sort" id="sort-email"></i></th>
+              <th class="sortable" onclick="ordenar('data_nascimento')">Nascimento <i class="ti ti-arrows-sort" id="sort-data_nascimento"></i></th>
               <th>Telefone</th>
-              <th>Cadastrado em</th>
+              <th class="sortable" onclick="ordenar('criado_em')">Cadastrado em <i class="ti ti-arrows-sort" id="sort-criado_em"></i></th>
               <th></th>
             </tr>
           </thead>
@@ -107,18 +174,15 @@
       </div>
 
       <div class="pagination" id="paginacao" style="display:none;">
-        <button class="btn-page" id="btn-prev" onclick="mudarPagina(-1)">
-          <i class="ti ti-chevron-left"></i> Anterior
-        </button>
+        <button class="btn-page" id="btn-prev" onclick="mudarPagina(-1)"><i class="ti ti-chevron-left"></i> Anterior</button>
         <span class="page-info" id="page-info"></span>
-        <button class="btn-page" id="btn-next" onclick="mudarPagina(1)">
-          Próxima <i class="ti ti-chevron-right"></i>
-        </button>
+        <button class="btn-page" id="btn-next" onclick="mudarPagina(1)">Próxima <i class="ti ti-chevron-right"></i></button>
       </div>
     </div>
 
   </main>
 
+  <!-- Modal -->
   <div class="modal-overlay" id="modal" onclick="fecharModal(event)">
     <div class="modal-card">
       <div class="modal-header">
@@ -129,8 +193,11 @@
     </div>
   </div>
 
-  <!-- SDK Supabase (apenas uma vez) -->
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="auth.js"></script>
   <script src="admin.js"></script>
 </body>

@@ -30,9 +30,7 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'DM Sans', sans-serif;
@@ -50,8 +48,7 @@
       overflow-x: hidden;
     }
 
-    body::before,
-    body::after {
+    body::before, body::after {
       content: '';
       position: fixed;
       inset: auto;
@@ -62,18 +59,14 @@
     }
 
     body::before {
-      width: 360px;
-      height: 360px;
-      right: -140px;
-      top: -80px;
+      width: 360px; height: 360px;
+      right: -140px; top: -80px;
       background: rgba(212, 171, 54, 0.08);
     }
 
     body::after {
-      width: 260px;
-      height: 260px;
-      left: -120px;
-      bottom: -60px;
+      width: 260px; height: 260px;
+      left: -120px; bottom: -60px;
       background: rgba(255, 255, 255, 0.04);
     }
 
@@ -96,8 +89,7 @@
     }
 
     .brand-mark {
-      width: 88px;
-      height: 88px;
+      width: 88px; height: 88px;
       border-radius: 0;
       margin: 0 auto 0.8rem;
       display: flex;
@@ -112,8 +104,7 @@
     }
 
     .brand-mark img {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       object-fit: contain;
       display: block;
       padding: 0;
@@ -160,8 +151,7 @@
     }
 
     .progress-dot {
-      width: 160px;
-      height: 8px;
+      width: 160px; height: 8px;
       border-radius: 999px;
       background: rgba(216, 172, 50, 0.22);
       transition: all 0.25s ease;
@@ -187,7 +177,6 @@
     .card:nth-of-type(2) { animation-delay: 0.08s; }
 
     .field { margin-bottom: 1rem; }
-
     .field:last-child { margin-bottom: 0; }
 
     .field label {
@@ -225,13 +214,27 @@
       transform: translateY(-1px);
     }
 
-    .field input.error { border-color: var(--danger); }
+    .field input.error {
+      border-color: var(--danger) !important;
+      box-shadow: 0 0 0 3px rgba(255, 128, 111, 0.15) !important;
+    }
+
+    .field input.valid {
+      border-color: rgba(100, 210, 120, 0.55);
+      box-shadow: 0 0 0 3px rgba(100, 210, 120, 0.10);
+    }
 
     .err-msg {
       font-size: 0.78rem;
       color: #ff9a8f;
       margin-top: 0.38rem;
       display: none;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .err-msg.visible {
+      display: flex;
     }
 
     .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -264,16 +267,26 @@
       align-items: center;
       justify-content: center;
       gap: 0.55rem;
-      transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
       margin-top: 1.15rem;
       box-shadow: none;
     }
 
-    .btn-submit:hover { filter: brightness(1.06); transform: translateY(-1px); background: rgba(216, 172, 50, 0.08); }
+    .btn-submit:not(:disabled):hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+      background: rgba(216, 172, 50, 0.08);
+    }
 
-    .btn-submit:active { transform: translateY(0) scale(0.99); }
+    .btn-submit:not(:disabled):active { transform: translateY(0) scale(0.99); }
 
-    .btn-submit:disabled { background: rgba(255, 255, 255, 0.1); cursor: not-allowed; box-shadow: none; }
+    .btn-submit:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+      filter: none;
+      transform: none;
+    }
 
     .alert-erro {
       background: rgba(255, 140, 120, 0.1);
@@ -303,8 +316,7 @@
     }
 
     .success-circle {
-      width: 82px;
-      height: 82px;
+      width: 82px; height: 82px;
       border-radius: 50%;
       background: rgba(216, 172, 50, 0.16);
       display: flex;
@@ -342,14 +354,10 @@
       flex-wrap: wrap;
     }
 
-    .footer-social a {
-      color: inherit;
-      text-decoration: none;
-    }
+    .footer-social a { color: inherit; text-decoration: none; }
 
     .footer-social .admin-access {
-      width: 40px;
-      height: 40px;
+      width: 40px; height: 40px;
       border-radius: 50%;
       display: inline-flex;
       align-items: center;
@@ -375,8 +383,7 @@
     }
 
     .footer-social .social-icon {
-      width: 40px;
-      height: 40px;
+      width: 40px; height: 40px;
       border-radius: 50%;
       display: inline-flex;
       align-items: center;
@@ -386,10 +393,7 @@
       transition: transform 0.15s ease, background 0.15s ease;
     }
 
-    .footer-social .social-icon i {
-      font-size: 1.05rem;
-      color: var(--accent-2);
-    }
+    .footer-social .social-icon i { font-size: 1.05rem; color: var(--accent-2); }
 
     .footer-social a:hover .social-icon {
       transform: translateY(-1px);
@@ -397,106 +401,30 @@
     }
 
     @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(14px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 540px) {
-      body {
-        padding: 0.8rem 0.7rem 1rem;
-        align-items: stretch;
-      }
-
-      .wrap {
-        max-width: 100%;
-      }
-
-      .logo-area {
-        padding: 1rem 0.9rem 1.2rem;
-      }
-
-      .brand-mark {
-        width: 82px;
-        height: 82px;
-        margin-bottom: 0.9rem;
-      }
-
-      .brand-mark span {
-        font-size: 2rem;
-      }
-
-      .form-title {
-        font-size: clamp(1.55rem, 7vw, 1.95rem);
-      }
-
-      .form-subtitle {
-        font-size: 0.9rem;
-        padding: 0 0.2rem;
-      }
-
-      .progress {
-        margin-bottom: 0.95rem;
-      }
-
-      .progress-dot {
-        width: 88px;
-        height: 7px;
-      }
-
-      .progress-dot.active {
-        width: 88px;
-      }
-
-      .card {
-        padding: 1rem;
-        border-radius: 16px;
-        box-shadow: 0 12px 26px rgba(3, 30, 8, 0.26);
-      }
-
-      .field {
-        margin-bottom: 0.9rem;
-      }
-
-      .field input {
-        height: 44px;
-        font-size: 0.96rem;
-      }
-
-      .row2 {
-        grid-template-columns: 1fr;
-        gap: 0.9rem;
-      }
-
-      .btn-submit {
-        height: 46px;
-        font-size: 0.98rem;
-        border-radius: 8px;
-      }
-
-      .success-wrap {
-        padding: 2.6rem 1rem;
-        border-radius: 18px;
-      }
-
-      .success-circle {
-        width: 72px;
-        height: 72px;
-        border-radius: 20px;
-      }
-
-      .success-circle i {
-        font-size: 32px;
-      }
-
-      .success-sub {
-        font-size: 0.95rem;
-      }
+      body { padding: 0.8rem 0.7rem 1rem; align-items: stretch; }
+      .wrap { max-width: 100%; }
+      .logo-area { padding: 1rem 0.9rem 1.2rem; }
+      .brand-mark { width: 82px; height: 82px; margin-bottom: 0.9rem; }
+      .brand-mark span { font-size: 2rem; }
+      .form-title { font-size: clamp(1.55rem, 7vw, 1.95rem); }
+      .form-subtitle { font-size: 0.9rem; padding: 0 0.2rem; }
+      .progress { margin-bottom: 0.95rem; }
+      .progress-dot { width: 88px; height: 7px; }
+      .progress-dot.active { width: 88px; }
+      .card { padding: 1rem; border-radius: 16px; box-shadow: 0 12px 26px rgba(3, 30, 8, 0.26); }
+      .field { margin-bottom: 0.9rem; }
+      .field input { height: 44px; font-size: 0.96rem; }
+      .row2 { grid-template-columns: 1fr; gap: 0.9rem; }
+      .btn-submit { height: 46px; font-size: 0.98rem; border-radius: 8px; }
+      .success-wrap { padding: 2.6rem 1rem; border-radius: 18px; }
+      .success-circle { width: 72px; height: 72px; border-radius: 20px; }
+      .success-circle i { font-size: 32px; }
+      .success-sub { font-size: 0.95rem; }
     }
   </style>
 </head>
@@ -505,7 +433,8 @@
 <div class="wrap">
   <div class="logo-area">
     <div class="brand-mark" aria-label="Bem Brasil Restaurante">
-      <img src="logo.png" alt="Logo do Bem Brasil Restaurante" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+      <img src="logo.png" alt="Logo do Bem Brasil Restaurante"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
       <span style="display:none;">BB</span>
     </div>
     <p class="brand-kicker">Bem Brasil Restaurante</p>
@@ -525,36 +454,31 @@
         <label><i class="ti ti-user-circle"></i> Dados pessoais</label>
       </div>
       <div class="field">
-        <label><i class="ti ti-user"></i> Nome completo</label>
+        <label for="nome"><i class="ti ti-user"></i> Nome completo</label>
         <input type="text" id="nome" placeholder="Ex: Maria Silva" autocomplete="name" />
-        <div class="err-msg" id="e-nome">Por favor, informe seu nome completo.</div>
+        <div class="err-msg" id="e-nome"><i class="ti ti-alert-circle"></i> Digite seu nome completo.</div>
       </div>
       <div class="field">
-        <label><i class="ti ti-mail"></i> E-mail</label>
-        <input type="email" id="email" placeholder="Ex: maria@email.com" autocomplete="email" />
-        <div class="err-msg" id="e-email">Informe um e-mail válido.</div>
+        <label for="email"><i class="ti ti-mail"></i> E-mail</label>
+        <input type="email" id="email" placeholder="Ex: maria@email.com" autocomplete="email" inputmode="email" />
+        <div class="err-msg" id="e-email"><i class="ti ti-alert-circle"></i> Digite um e-mail válido.</div>
       </div>
     </div>
 
     <div class="card">
       <div class="field" style="margin-bottom: 1.1rem;">
-        <label><i class="ti ti-id"></i> Identificação</label>
-      </div>
-      <div class="field">
-        <label><i class="ti ti-id-badge"></i> CPF</label>
-        <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" />
-        <div class="err-msg" id="e-cpf">CPF inválido.</div>
+        <label><i class="ti ti-id"></i> Informações adicionais</label>
       </div>
       <div class="row2">
         <div class="field">
-          <label><i class="ti ti-calendar"></i> Data de nascimento</label>
+          <label for="nasc"><i class="ti ti-calendar"></i> Data de nascimento</label>
           <input type="date" id="nasc" />
-          <div class="err-msg" id="e-nasc">Informe sua data de nascimento.</div>
+          <div class="err-msg" id="e-nasc"><i class="ti ti-alert-circle"></i> Digite uma data de nascimento válida.</div>
         </div>
         <div class="field">
-          <label><i class="ti ti-phone"></i> Telefone</label>
+          <label for="tel"><i class="ti ti-phone"></i> Telefone</label>
           <input type="tel" id="tel" placeholder="(11) 99999-9999" maxlength="15" inputmode="numeric" />
-          <div class="err-msg" id="e-tel">Telefone inválido.</div>
+          <div class="err-msg" id="e-tel"><i class="ti ti-alert-circle"></i> Digite um telefone válido.</div>
         </div>
       </div>
     </div>
@@ -569,7 +493,7 @@
       <span id="alert-erro-msg">Erro ao salvar. Tente novamente.</span>
     </div>
 
-    <button class="btn-submit" id="btn" onclick="enviar()">
+    <button class="btn-submit" id="btn" onclick="enviar()" disabled>
       <i class="ti ti-check"></i> Confirmar cadastro
     </button>
   </div>
@@ -581,7 +505,8 @@
   </div>
 
   <footer class="footer-social" aria-label="Redes sociais do Bem Brasil">
-    <a class="social-link" href="https://www.instagram.com/oficialbembrasil/" target="_blank" rel="noopener noreferrer" aria-label="Abrir Instagram oficial do Bem Brasil">
+    <a class="social-link" href="https://www.instagram.com/oficialbembrasil/"
+       target="_blank" rel="noopener noreferrer" aria-label="Abrir Instagram oficial do Bem Brasil">
       <span class="social-icon"><i class="ti ti-brand-instagram"></i></span>
       <span>@oficialbembrasil</span>
     </a>
@@ -592,75 +517,277 @@
 </div>
 
 <script>
-  const SUPABASE_URL     = 'https://vtbrvwagyhlbuuitwfpe.supabase.co';
-  const SUPABASE_KEY     = 'sb_publishable_Po5meq60q7XSVWBtBMw4Jw_l4YXF3lV';
+  /* ─── CONFIG ─────────────────────────────────────────── */
+  const SUPABASE_URL = 'https://vtbrvwagyhlbuuitwfpe.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_Po5meq60q7XSVWBtBMw4Jw_l4YXF3lV';
 
-  document.getElementById('cpf').addEventListener('input', function () {
-    let v = this.value.replace(/\D/g, '').slice(0, 11);
-    v = v.replace(/(\d{3})(\d)/, '$1.$2');
-    v = v.replace(/(\d{3})(\d)/, '$1.$2');
-    v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-    this.value = v;
-  });
+  /* ─── ESTADO DE VALIDAÇÃO ─────────────────────────────── */
+  const fieldState = { nome: false, email: false, nasc: false, tel: false };
 
+  /* ─── MÁSCARA DE TELEFONE ─────────────────────────────── */
   document.getElementById('tel').addEventListener('input', function () {
     let v = this.value.replace(/\D/g, '').slice(0, 11);
     if (v.length <= 10) {
-      v = v.replace(/(\d{2})(\d)/, '($1) $2');
+      v = v.replace(/^(\d{2})(\d)/, '($1) $2');
       v = v.replace(/(\d{4})(\d)/, '$1-$2');
     } else {
-      v = v.replace(/(\d{2})(\d)/, '($1) $2');
+      v = v.replace(/^(\d{2})(\d)/, '($1) $2');
       v = v.replace(/(\d{5})(\d)/, '$1-$2');
     }
     this.value = v;
+    validateField('tel');
   });
 
-  function validCPF(c) {
-    c = c.replace(/\D/g, '');
-    if (c.length !== 11 || /^(\d)\1+$/.test(c)) return false;
-    let s = 0;
-    for (let i = 0; i < 9; i++) s += +c[i] * (10 - i);
-    let r = (s * 10) % 11;
-    if (r === 10 || r === 11) r = 0;
-    if (r !== +c[9]) return false;
-    s = 0;
-    for (let i = 0; i < 10; i++) s += +c[i] * (11 - i);
-    r = (s * 10) % 11;
-    if (r === 10 || r === 11) r = 0;
-    return r === +c[10];
+  /* ─── VALIDADORES ─────────────────────────────────────── */
+
+  /**
+   * Nome completo:
+   * - Mínimo 2 palavras, cada uma com ≥ 2 letras
+   * - Apenas letras (incluindo acentuação) e espaços
+   */
+  function validarNome(v) {
+    v = v.trim();
+    if (!v) return false;
+    // Só letras e espaços (sem dígitos, símbolos)
+    if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(v)) return false;
+    const palavras = v.split(/\s+/).filter(p => p.length >= 2);
+    return palavras.length >= 2;
   }
 
-  function showErr(id, show) {
-    const msg = document.getElementById('e-' + id);
+  /**
+   * E-mail:
+   * Regex estrita: local@domínio.tld (tld mínimo 2 chars)
+   * Bloqueia: teste@, @gmail.com, teste@gmail, teste@.com, teste@@gmail.com
+   */
+  function validarEmail(v) {
+    v = v.trim();
+    // Regex estrita – nenhum ponto duplo, arroba duplo, ponto antes do @, etc.
+    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(v)
+      && !v.includes('..')        // sem pontos duplos
+      && !v.startsWith('.')       // não começa com ponto
+      && !/\.@/.test(v)           // sem ponto imediatamente antes do @
+      && !/^[^@]*@\./.test(v);    // sem ponto imediatamente após o @
+  }
+
+  /**
+   * Data de nascimento:
+   * - Deve ser uma data real (mês/dia válidos para o ano)
+   * - Não pode ser futura
+   * - Idade entre 0 e 120 anos
+   */
+  function validarNasc(v) {
+    if (!v) return false;
+
+    // Parse sem fuso-horário (yyyy-mm-dd)
+    const [ano, mes, dia] = v.split('-').map(Number);
+    if (!ano || !mes || !dia) return false;
+
+    // Verificar se a data realmente existe
+    const d = new Date(ano, mes - 1, dia);
+    if (
+      d.getFullYear() !== ano ||
+      d.getMonth() !== mes - 1 ||
+      d.getDate() !== dia
+    ) return false;
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    // Não pode ser futura nem igual a hoje (recém-nascido = ok; data futura = não)
+    if (d > hoje) return false;
+
+    // Idade máxima de 120 anos
+    const limiteMin = new Date(hoje);
+    limiteMin.setFullYear(limiteMin.getFullYear() - 120);
+    if (d < limiteMin) return false;
+
+    return true;
+  }
+
+  /**
+   * Telefone brasileiro:
+   * - 10 dígitos (fixo): DDD + 8 dígitos
+   * - 11 dígitos (celular): DDD + 9 (iniciando em 9) + 8 dígitos
+   * - DDD válido (11–99, exceto alguns reservados)
+   * - Bloqueia sequências repetidas (1111…, 0000…) e crescentes (12345…)
+   */
+  function validarTel(v) {
+    const digits = v.replace(/\D/g, '');
+
+    if (digits.length !== 10 && digits.length !== 11) return false;
+
+    // DDD: primeiro par de dígitos, deve estar entre 11 e 99
+    const ddd = parseInt(digits.slice(0, 2), 10);
+    if (ddd < 11 || ddd > 99) return false;
+
+    // DDDs brasileiros válidos (lista oficial Anatel)
+    const dddsValidos = [
+      11,12,13,14,15,16,17,18,19,
+      21,22,24,27,28,
+      31,32,33,34,35,37,38,
+      41,42,43,44,45,46,47,48,49,
+      51,53,54,55,
+      61,62,63,64,65,66,67,68,69,
+      71,73,74,75,77,79,
+      81,82,83,84,85,86,87,88,89,
+      91,92,93,94,95,96,97,98,99
+    ];
+    if (!dddsValidos.includes(ddd)) return false;
+
+    const numero = digits.slice(2);
+
+    // Celular: deve começar com 9 e ter 9 dígitos
+    if (digits.length === 11 && numero[0] !== '9') return false;
+
+    // Bloquear sequências repetidas (ex: 11111111111, 00000000000)
+    if (/^(\d)\1+$/.test(digits)) return false;
+
+    // Bloquear sequências óbvias conhecidas
+    const invalidos = ['1234567890','0123456789','9876543210'];
+    if (invalidos.some(s => digits.includes(s.slice(0, digits.length)))) {
+      // Apenas bloquear se o número inteiro é uma sequência
+      if (/^(\d)\1*$/.test(numero) || numero === '12345678' || numero === '987654321') return false;
+    }
+
+    return true;
+  }
+
+  /* ─── LÓGICA DE UI ────────────────────────────────────── */
+
+  function setFieldError(id, isError) {
     const inp = document.getElementById(id);
-    if (msg) msg.style.display = show ? 'block' : 'none';
-    if (inp) inp.classList.toggle('error', show);
+    const msg = document.getElementById('e-' + id);
+    if (!inp || !msg) return;
+
+    if (isError) {
+      inp.classList.add('error');
+      inp.classList.remove('valid');
+      msg.classList.add('visible');
+    } else {
+      inp.classList.remove('error');
+      inp.classList.add('valid');
+      msg.classList.remove('visible');
+    }
   }
 
+  function clearField(id) {
+    const inp = document.getElementById(id);
+    const msg = document.getElementById('e-' + id);
+    if (!inp || !msg) return;
+    inp.classList.remove('error', 'valid');
+    msg.classList.remove('visible');
+  }
+
+  function validateField(id) {
+    const inp = document.getElementById(id);
+    if (!inp) return;
+    const v = inp.value;
+
+    // Não mostrar erro em campos ainda não tocados (vazios ao iniciar)
+    const isEmpty = v.trim() === '' || v === '';
+
+    let isValid = false;
+    switch (id) {
+      case 'nome':  isValid = validarNome(v);  break;
+      case 'email': isValid = validarEmail(v); break;
+      case 'nasc':  isValid = validarNasc(v);  break;
+      case 'tel':   isValid = validarTel(v);   break;
+    }
+
+    fieldState[id] = isValid;
+
+    if (isEmpty && !inp.dataset.touched) {
+      clearField(id);
+    } else {
+      setFieldError(id, !isValid);
+    }
+
+    atualizarBotao();
+  }
+
+  function marcarTocado(id) {
+    const inp = document.getElementById(id);
+    if (inp) inp.dataset.touched = '1';
+  }
+
+  function atualizarBotao() {
+    const tudo = Object.values(fieldState).every(Boolean);
+    document.getElementById('btn').disabled = !tudo;
+  }
+
+  /* ─── OUVINTES DE EVENTOS ─────────────────────────────── */
+  ['nome', 'email', 'nasc', 'tel'].forEach(id => {
+    const inp = document.getElementById(id);
+    if (!inp) return;
+
+    // Validação em tempo real ao digitar
+    inp.addEventListener('input', () => {
+      marcarTocado(id);
+      validateField(id);
+    });
+
+    // Validação ao sair do campo (garante estado correto)
+    inp.addEventListener('blur', () => {
+      marcarTocado(id);
+      validateField(id);
+    });
+  });
+
+  /* ─── VALIDAÇÃO NO FRONTEND (antes do envio) ──────────── */
+  function validarTudo() {
+    ['nome', 'email', 'nasc', 'tel'].forEach(id => {
+      marcarTocado(id);
+      validateField(id);
+    });
+    return Object.values(fieldState).every(Boolean);
+  }
+
+  /* ─── VALIDAÇÃO NO "BACKEND" (antes de chamar Supabase) ── */
+  function validarPayload(dados) {
+    const erros = [];
+
+    if (!validarNome(dados.nome))
+      erros.push('Nome inválido: informe nome e sobrenome, apenas letras.');
+
+    if (!validarEmail(dados.email))
+      erros.push('E-mail inválido: verifique o formato digitado.');
+
+    if (!validarNasc(dados.data_nascimento))
+      erros.push('Data de nascimento inválida.');
+
+    // telefone já sem máscara
+    const telLimpo = dados.telefone.replace(/\D/g, '');
+    if (!validarTel(dados.telefone))
+      erros.push('Telefone inválido: use um número brasileiro válido.');
+
+    return erros;
+  }
+
+  /* ─── ENVIO ───────────────────────────────────────────── */
   async function enviar() {
     const alerta = document.getElementById('alert-erro');
     alerta.style.display = 'none';
 
-    let ok = true;
+    // 1ª camada: validação no frontend
+    if (!validarTudo()) {
+      alerta.style.display = 'flex';
+      document.getElementById('alert-erro-msg').textContent =
+        'Corrija os campos destacados antes de continuar.';
+      return;
+    }
+
     const nome  = document.getElementById('nome').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const cpf   = document.getElementById('cpf').value;
+    const email = document.getElementById('email').value.trim().toLowerCase();
     const nasc  = document.getElementById('nasc').value;
-    const tel   = document.getElementById('tel').value.replace(/\D/g, '');
+    const tel   = document.getElementById('tel').value;
 
-    const nomeOk  = nome.split(' ').length >= 2 && nome.length >= 5;
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const cpfOk   = validCPF(cpf);
-    const nascOk  = nasc !== '';
-    const telOk   = tel.length >= 10;
-
-    showErr('nome',  !nomeOk);  if (!nomeOk)  ok = false;
-    showErr('email', !emailOk); if (!emailOk) ok = false;
-    showErr('cpf',   !cpfOk);   if (!cpfOk)   ok = false;
-    showErr('nasc',  !nascOk);  if (!nascOk)  ok = false;
-    showErr('tel',   !telOk);   if (!telOk)   ok = false;
-
-    if (!ok) return;
+    // 2ª camada: validação do payload antes de tocar na API
+    const errosPayload = validarPayload({ nome, email, data_nascimento: nasc, telefone: tel });
+    if (errosPayload.length > 0) {
+      alerta.style.display = 'flex';
+      document.getElementById('alert-erro-msg').textContent = errosPayload[0];
+      return;
+    }
 
     const btn = document.getElementById('btn');
     btn.disabled = true;
@@ -676,26 +803,37 @@
           'Prefer': 'return=minimal'
         },
         body: JSON.stringify({
-          nome:            nome,
-          email:           email,
-          cpf:             cpf,
+          nome,
+          email,
           data_nascimento: nasc,
-          telefone:        document.getElementById('tel').value
+          telefone: tel
         })
       });
 
       if (!response.ok) {
         const erro = await response.json().catch(() => ({}));
+
         if (erro.code === '23505') {
-          throw new Error('Este CPF ou e-mail já está cadastrado.');
+          throw new Error('Este e-mail já está cadastrado. Use outro e-mail ou entre em contato conosco.');
         }
-        throw new Error('Erro ao salvar. Verifique os dados e tente novamente.');
+
+        // Erros de constraint do banco (check constraints configuradas no Supabase)
+        if (erro.code === '23514') {
+          throw new Error('Dados inválidos rejeitados pelo servidor. Verifique as informações e tente novamente.');
+        }
+
+        throw new Error(
+          erro.message
+            ? `Erro: ${erro.message}`
+            : 'Erro ao salvar. Verifique os dados e tente novamente.'
+        );
       }
 
+      // Sucesso confirmado pelo Supabase
       ['d1', 'd2', 'd3'].forEach(id => document.getElementById(id).classList.add('active'));
       setTimeout(() => {
         document.getElementById('form-wrap').style.display = 'none';
-        document.getElementById('success').style.display = 'block';
+        document.getElementById('success').style.display   = 'block';
       }, 400);
 
     } catch (err) {
