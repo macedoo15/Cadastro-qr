@@ -3,6 +3,8 @@
 // ============================================================
 
 const POR_PAGINA = 10;
+const API_BASE = '/api';
+const ADMIN_TOKEN_KEY = 'admin-auth-token';
 let paginaAtual    = 1;
 let todosCadastros = [];   // cache completo do Supabase
 let filtrados      = [];   // resultado após filtros
@@ -13,9 +15,47 @@ let ordemAsc       = false;
 const filtrosAtivos = { periodo: null, aniv: null };
 
 // ── Autenticação ──
+function obterAdminToken() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(ADMIN_TOKEN_KEY) || '{}');
+    if (parsed.expires_at && parsed.expires_at < Math.floor(Date.now() / 1000)) {
+      localStorage.removeItem(ADMIN_TOKEN_KEY);
+      return '';
+    }
+    return parsed.access_token || '';
+  } catch (_) {
+    return '';
+  }
+}
+
 async function verificarAuth() {
-  const { data } = await supabaseClient.auth.getSession();
-  if (!data.session) window.location.href = 'login.html';
+  const token = obterAdminToken();
+  if (!token) {
+    window.location.href = 'login.html';
+    return false;
+  }
+
+  const response = await fetch(`${API_BASE}/session`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    localStorage.removeItem(ADMIN_TOKEN_KEY);
+    window.location.href = 'login.html';
+    return false;
+  }
+
+  return true;
+}
+
+async function lerJsonSeguro(response) {
+  const texto = await response.text();
+  if (!texto) return {};
+  try {
+    return JSON.parse(texto);
+  } catch (_) {
+    return { error: 'Resposta inválida do servidor. Verifique se as rotas /api estão ativas.' };
+  }
 }
 
 // ── Carregar todos os cadastros ──
@@ -23,19 +63,19 @@ async function carregarCadastros() {
   mostrarLoading(true);
   animarRefresh(true);
 
-  const { data, error } = await supabaseClient
-    .from('cadastros')
-    .select('*')
-    .order('criado_em', { ascending: false });
+  const response = await fetch(`${API_BASE}/cadastros`, {
+    headers: { Authorization: `Bearer ${obterAdminToken()}` },
+  });
 
   animarRefresh(false);
 
-  if (error) {
-    console.error('Erro ao buscar cadastros:', error);
+  if (!response.ok) {
+    console.error('Erro ao buscar cadastros:', await lerJsonSeguro(response));
     mostrarErro();
     return;
   }
 
+  const data = await lerJsonSeguro(response);
   todosCadastros = data || [];
   atualizarEstatisticas();
   aplicarFiltros();
@@ -379,18 +419,18 @@ function baixarBlob(blob, nome) {
 
 // ── Realtime ──
 function iniciarRealtime() {
-  supabaseClient
-    .channel('cadastros-realtime')
-    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'cadastros' }, payload => {
-      todosCadastros.unshift(payload.new);
-      atualizarEstatisticas();
-      aplicarFiltros();
+  setInterval(async () => {
+    const totalAntes = todosCadastros.length;
+    await carregarCadastros();
+    if (todosCadastros.length > totalAntes) {
       const badge = document.getElementById('realtime-badge');
-      badge.classList.add('pulse');
-      setTimeout(() => badge.classList.remove('pulse'), 2000);
+      if (badge) {
+        badge.classList.add('pulse');
+        setTimeout(() => badge.classList.remove('pulse'), 2000);
+      }
       mostrarToast('Novo cadastro recebido!', 'ok');
-    })
-    .subscribe();
+    }
+  }, 30000);
 }
 
 // ── Toast ──
@@ -437,7 +477,8 @@ function animarRefresh(ativo) {
 
 // ── Init ──
 (async () => {
-  await verificarAuth();
+  const autenticado = await verificarAuth();
+  if (!autenticado) return;
   await carregarCadastros();
   iniciarRealtime();
 })();

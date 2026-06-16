@@ -1,20 +1,32 @@
 // ============================================================
-//  auth.js — Configuração do cliente Supabase
+//  auth.js - helpers de sessao sem chaves sensiveis no frontend
 // ============================================================
 
-const SUPABASE_URL = 'https://vtbrvwagyhlbuuitwfpe.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0YnJ2d2FneWhsYnV1aXR3ZnBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NjA2ODgsImV4cCI6MjA5NjUzNjY4OH0.nUBMV8LcQHMCj45ZEFpGZHpV_5pWzCprWRe2X26Jbt0';
+const TOKEN_KEY = 'admin-auth-token';
 
-// Evita declarar duas vezes caso o script seja carregado mais de uma vez
-if (typeof window._supabaseClient === 'undefined') {
-  window._supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+function obterTokenAuth() {
+  try {
+    return JSON.parse(localStorage.getItem(TOKEN_KEY) || '{}').access_token || '';
+  } catch (_) {
+    return '';
+  }
 }
 
-// Alias global usado em login.html e admin.html
-const supabaseClient = window._supabaseClient;
+function limparTokenAuth() {
+  localStorage.removeItem(TOKEN_KEY);
+}
 
-// Função de logout
 async function sair() {
-  await supabaseClient.auth.signOut();
+  const token = obterTokenAuth();
+  try {
+    if (token) {
+      await fetch('/api/logout', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    }
+  } catch (_) {}
+
+  limparTokenAuth();
   window.location.href = 'login.html';
 }

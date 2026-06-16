@@ -214,8 +214,8 @@
 </main>
 
 <script>
-  const SUPABASE_URL = 'https://vtbrvwagyhlbuuitwfpe.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0YnJ2d2FneWhsYnV1aXR3ZnBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NjA2ODgsImV4cCI6MjA5NjUzNjY4OH0.nUBMV8LcQHMCj45ZEFpGZHpV_5pWzCprWRe2X26Jbt0';
+  const API_BASE = '/api';
+  const TOKEN_KEY = 'admin-auth-token';
   const PAGE_SIZE = 20;
 
   let todosRegistros = [];
@@ -225,12 +225,11 @@
 
   function obterToken() {
     try {
-      const key = `sb-${SUPABASE_URL.split('//')[1].split('.')[0]}-auth-token`;
-      const raw = localStorage.getItem(key);
+      const raw = localStorage.getItem(TOKEN_KEY);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
       if (parsed.expires_at && parsed.expires_at < Math.floor(Date.now() / 1000)) {
-        localStorage.removeItem(key);
+        localStorage.removeItem(TOKEN_KEY);
         return null;
       }
       return parsed.access_token ?? null;
@@ -238,8 +237,17 @@
   }
 
   function limparSessao() {
-    const key = `sb-${SUPABASE_URL.split('//')[1].split('.')[0]}-auth-token`;
-    localStorage.removeItem(key);
+    localStorage.removeItem(TOKEN_KEY);
+  }
+
+  async function lerJsonSeguro(res) {
+    const texto = await res.text();
+    if (!texto) return {};
+    try {
+      return JSON.parse(texto);
+    } catch (_) {
+      return { error: 'Resposta inválida do servidor. Verifique se as rotas /api estão ativas.' };
+    }
   }
 
   async function verificarSessao() {
@@ -247,13 +255,13 @@
     if (!token) { redirecionarLogin(); return; }
 
     try {
-      const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}` }
+      const res = await fetch(`${API_BASE}/session`, {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (!res.ok) { limparSessao(); redirecionarLogin(); return; }
 
-      const user = await res.json();
+      const user = await lerJsonSeguro(res);
       tokenAtivo = token;
 
       document.getElementById('loading-overlay').classList.add('hidden');
@@ -272,9 +280,9 @@
 
   async function fazerLogout() {
     try {
-      await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+      await fetch(`${API_BASE}/logout`, {
         method: 'POST',
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${tokenAtivo}` }
+        headers: { 'Authorization': `Bearer ${tokenAtivo}` }
       });
     } catch (_) {}
     limparSessao();
@@ -284,21 +292,20 @@
   /* ── Carregar cadastros — usa criado_em (nome real da coluna) ── */
   async function carregarCadastros() {
     try {
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/cadastros?select=id,nome,email,telefone,data_nascimento,criado_em&order=criado_em.desc`,
-        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${tokenAtivo}` } }
-      );
+      const res = await fetch(`${API_BASE}/cadastros`, {
+        headers: { 'Authorization': `Bearer ${tokenAtivo}` }
+      });
 
       if (res.status === 401 || res.status === 403) {
         limparSessao(); redirecionarLogin(); return;
       }
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
+        const err = await lerJsonSeguro(res);
         throw new Error(err.message || res.statusText);
       }
 
-      todosRegistros = await res.json();
+      todosRegistros = await lerJsonSeguro(res);
       filtrar();
 
     } catch (e) {
