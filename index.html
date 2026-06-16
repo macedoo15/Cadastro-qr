@@ -57,7 +57,8 @@
     .field:last-child { margin-bottom:0; }
     .field label { display:flex; align-items:center; gap:0.45rem; font-size:0.76rem; color:var(--accent); margin-bottom:0.55rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; }
     .field label i { font-size:1rem; color:var(--accent); }
-    .field input { width:100%; padding:0 14px; height:42px; font-size:1rem; background:#373132; border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#f5efe0; transition:border-color 0.2s,box-shadow 0.2s,transform 0.15s,background 0.2s; outline:none; box-shadow:inset 0 1px 0 rgba(255,255,255,0.08); }
+    .field-hint { font-size:0.72rem; color:var(--muted); margin-top:0.32rem; }
+    .field input { width:100%; padding:0 14px; height:44px; font-size:1rem; background:#373132; border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#f5efe0; transition:border-color 0.2s,box-shadow 0.2s,transform 0.15s,background 0.2s; outline:none; box-shadow:inset 0 1px 0 rgba(255,255,255,0.08); -webkit-tap-highlight-color: transparent; }
     .field input:focus { border-color:rgba(216,172,50,0.65); box-shadow:0 0 0 3px rgba(216,172,50,0.14); background:#3d3738; transform:translateY(-1px); }
     .field input.error { border-color:var(--danger) !important; box-shadow:0 0 0 3px rgba(255,128,111,0.15) !important; }
     .field input.valid { border-color:rgba(100,210,120,0.55); box-shadow:0 0 0 3px rgba(100,210,120,0.10); }
@@ -76,7 +77,8 @@
     .captcha-status.ok  { color:#80d4a0; }
     .captcha-status.err { color:var(--danger); }
 
-    .btn-submit { width:100%; height:48px; background:transparent; color:#fff; border:1px solid var(--accent); border-radius:8px; font-size:1rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.55rem; transition:transform 0.15s,box-shadow 0.2s,filter 0.2s,opacity 0.2s; margin-top:1.15rem; }
+    .submit-bar { margin-top:1.15rem; }
+    .btn-submit { width:100%; height:48px; background:transparent; color:#fff; border:1px solid var(--accent); border-radius:8px; font-size:1rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.55rem; transition:transform 0.15s,box-shadow 0.2s,filter 0.2s,opacity 0.2s; touch-action:manipulation; }
     .btn-submit:not(:disabled):hover { filter:brightness(1.06); transform:translateY(-1px); background:rgba(216,172,50,0.08); }
     .btn-submit:not(:disabled):active { transform:translateY(0) scale(0.99); }
     .btn-submit:disabled { opacity:0.45; cursor:not-allowed; filter:none; transform:none; }
@@ -121,10 +123,21 @@
       .field { margin-bottom:0.9rem; }
       .field input { height:44px; font-size:0.96rem; }
       .row2 { grid-template-columns:1fr; gap:0.9rem; }
-      .btn-submit { height:46px; font-size:0.98rem; }
       .success-wrap { padding:2.6rem 1rem; border-radius:18px; }
       .success-circle { width:72px; height:72px; }
       .success-circle i { font-size:32px; }
+
+      /* Botão de envio fixo no rodapé — sempre visível e fácil de tocar */
+      #form-wrap { padding-bottom:88px; }
+      .submit-bar {
+        position:fixed; left:0; right:0; bottom:0; margin-top:0;
+        padding:0.7rem 0.9rem calc(0.7rem + env(safe-area-inset-bottom));
+        background:linear-gradient(180deg, rgba(13,90,34,0) 0%, rgba(13,90,34,0.94) 30%, var(--bg-2) 100%);
+        backdrop-filter:blur(8px);
+        border-top:1px solid var(--line);
+        z-index:60;
+      }
+      .btn-submit { height:50px; font-size:0.98rem; }
     }
   </style>
 </head>
@@ -155,7 +168,7 @@
       </div>
       <div class="field">
         <label for="nome"><i class="ti ti-user"></i> Nome completo</label>
-        <input type="text" id="nome" placeholder="Ex: Maria Silva" autocomplete="name" />
+        <input type="text" id="nome" placeholder="Ex: Maria Silva" autocomplete="name" maxlength="60" />
         <div class="err-msg" id="e-nome"><i class="ti ti-alert-circle"></i> Digite seu nome completo (nome e sobrenome).</div>
       </div>
       <div class="field">
@@ -173,7 +186,7 @@
         <div class="field">
           <label for="nasc"><i class="ti ti-calendar"></i> Data de nascimento</label>
           <input type="date" id="nasc" />
-          <div class="err-msg" id="e-nasc"><i class="ti ti-alert-circle"></i> Data inválida.</div>
+          <div class="err-msg" id="e-nasc"><i class="ti ti-alert-circle"></i> <span id="e-nasc-text">Data inválida.</span></div>
         </div>
         <div class="field">
           <label for="tel"><i class="ti ti-phone"></i> Telefone</label>
@@ -204,9 +217,11 @@
       <span id="alert-erro-msg">Erro ao salvar. Tente novamente.</span>
     </div>
 
-    <button class="btn-submit" id="btn" onclick="enviar()" disabled>
-      <i class="ti ti-check"></i> Confirmar cadastro
-    </button>
+    <div class="submit-bar">
+      <button class="btn-submit" id="btn" onclick="enviar()" disabled>
+        <i class="ti ti-check"></i> Confirmar cadastro
+      </button>
+    </div>
   </div>
 
   <div class="success-wrap" id="success">
@@ -234,6 +249,7 @@
   const TURNSTILE_TEST_KEY = '1x00000000000000000000BB';
   const IS_LOCAL           = ['localhost','127.0.0.1','0.0.0.0'].includes(location.hostname);
   const TURNSTILE_KEY      = IS_LOCAL ? TURNSTILE_TEST_KEY : TURNSTILE_PROD_KEY;
+  const IDADE_MINIMA       = 18;
 
   /* ── Estado ── */
   let turnstileToken  = '';
@@ -241,6 +257,18 @@
   let widgetRendered  = false;
 
   const fieldState = { nome: false, email: false, nasc: false, tel: false };
+
+  /* ── Limites nativos do seletor de data (bloqueia futuro e menores de 18) ── */
+  (function configurarNasc() {
+    const inp = document.getElementById('nasc');
+    if (!inp) return;
+    const hoje = new Date();
+    const limiteMax = new Date(hoje.getFullYear() - IDADE_MINIMA, hoje.getMonth(), hoje.getDate());
+    const limiteMin = new Date(hoje.getFullYear() - 120, hoje.getMonth(), hoje.getDate());
+    const fmt = d => d.toISOString().split('T')[0];
+    inp.max = fmt(limiteMax);
+    inp.min = fmt(limiteMin);
+  })();
 
   /* ── Turnstile ── */
   window.onloadTurnstileCallback = function () {
@@ -332,7 +360,8 @@
   /* ── Validadores ── */
   function validarNome(v) {
     v = v.trim();
-    if (!v || !/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(v)) return false;
+    if (!v || v.length > 60) return false;
+    if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(v)) return false;
     return v.split(/\s+/).filter(p => p.length >= 2).length >= 2;
   }
 
@@ -342,15 +371,34 @@
     return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(v);
   }
 
-  function validarNasc(v) {
-    if (!v) return false;
-    const [ano, mes, dia] = v.split('-').map(Number);
-    if (!ano || !mes || !dia) return false;
-    const d = new Date(ano, mes - 1, dia);
-    if (d.getFullYear() !== ano || d.getMonth() !== mes - 1 || d.getDate() !== dia) return false;
+  function idadeAnos(ano, mes, dia) {
     const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
-    const min  = new Date(hoje); min.setFullYear(min.getFullYear() - 120);
-    return d <= hoje && d >= min;
+    const nasc = new Date(ano, mes - 1, dia);
+    let idade = hoje.getFullYear() - nasc.getFullYear();
+    const aindaNaoFezAniversario =
+      (hoje.getMonth() < nasc.getMonth()) ||
+      (hoje.getMonth() === nasc.getMonth() && hoje.getDate() < nasc.getDate());
+    if (aindaNaoFezAniversario) idade--;
+    return idade;
+  }
+
+  // Retorna { ok, msg } para alimentar a mensagem de erro específica do campo
+  function avaliarNasc(v) {
+    if (!v) return { ok: false, msg: 'Selecione sua data de nascimento.' };
+    const [ano, mes, dia] = v.split('-').map(Number);
+    if (!ano || !mes || !dia) return { ok: false, msg: 'Data inválida.' };
+    const d = new Date(ano, mes - 1, dia);
+    if (d.getFullYear() !== ano || d.getMonth() !== mes - 1 || d.getDate() !== dia) {
+      return { ok: false, msg: 'Data inválida.' };
+    }
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    if (d > hoje) return { ok: false, msg: 'A data não pode ser no futuro.' };
+    const limiteMin = new Date(hoje); limiteMin.setFullYear(limiteMin.getFullYear() - 120);
+    if (d < limiteMin) return { ok: false, msg: 'Data inválida.' };
+    if (idadeAnos(ano, mes, dia) < IDADE_MINIMA) {
+      return { ok: false, msg: `É necessário ter ${IDADE_MINIMA} anos ou mais para se cadastrar.` };
+    }
+    return { ok: true, msg: '' };
   }
 
   function validarTel(v) {
@@ -402,10 +450,18 @@
     const v       = inp.value;
     const isEmpty = v.trim() === '';
     let ok = false;
+
     if (id === 'nome')  ok = validarNome(v);
     if (id === 'email') ok = validarEmail(v);
-    if (id === 'nasc')  ok = validarNasc(v);
     if (id === 'tel')   ok = validarTel(v);
+
+    if (id === 'nasc') {
+      const r = avaliarNasc(v);
+      ok = r.ok;
+      const txt = document.getElementById('e-nasc-text');
+      if (txt) txt.textContent = r.msg || 'Data inválida.';
+    }
+
     fieldState[id] = ok;
     if (isEmpty && !inp.dataset.touched) clearField(id);
     else setFieldError(id, !ok);

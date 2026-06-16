@@ -7,6 +7,8 @@ const {
   auditLog,
 } = require('./_supabase');
 
+const IDADE_MINIMA = 18;
+
 function normEmail(value) {
   return String(value || '').trim().toLowerCase();
 }
@@ -17,7 +19,8 @@ function normTel(value) {
 
 function validarNome(value) {
   const v = String(value || '').trim();
-  if (!v || !/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(v)) return false;
+  if (!v || v.length > 60) return false;
+  if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(v)) return false;
   return v.split(/\s+/).filter((part) => part.length >= 2).length >= 2;
 }
 
@@ -25,6 +28,18 @@ function validarEmail(value) {
   const v = normEmail(value);
   if (!v || v.includes('..') || v.startsWith('.') || /\.@/.test(v) || /^[^@]*@\./.test(v)) return false;
   return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(v);
+}
+
+function idadeAnos(ano, mes, dia) {
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  const nasc = new Date(ano, mes - 1, dia);
+  let idade = hoje.getFullYear() - nasc.getFullYear();
+  const aindaNaoFezAniversario =
+    (hoje.getMonth() < nasc.getMonth()) ||
+    (hoje.getMonth() === nasc.getMonth() && hoje.getDate() < nasc.getDate());
+  if (aindaNaoFezAniversario) idade--;
+  return idade;
 }
 
 function validarNasc(value) {
@@ -35,9 +50,11 @@ function validarNasc(value) {
   if (date.getFullYear() !== ano || date.getMonth() !== mes - 1 || date.getDate() !== dia) return false;
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
+  if (date > hoje) return false; // data futura nunca e valida
   const limiteMin = new Date(hoje);
   limiteMin.setFullYear(limiteMin.getFullYear() - 120);
-  return date <= hoje && date >= limiteMin;
+  if (date < limiteMin) return false;
+  return idadeAnos(ano, mes, dia) >= IDADE_MINIMA;
 }
 
 function validarTel(value) {
@@ -133,9 +150,24 @@ async function createCadastro(req, res) {
     return json(res, 400, { error: captcha.error });
   }
 
-  if (!validarNome(nome) || !validarEmail(email) || !validarNasc(dataNascimento) || !validarTel(telefone)) {
-    await auditLog('VALIDACAO_FALHOU', { email, telefoneNormalizado });
-    return json(res, 400, { error: 'Dados invalidos. Confira os campos e tente novamente.' });
+  if (!validarNome(nome)) {
+    await auditLog('VALIDACAO_FALHOU', { email, telefoneNormalizado, motivo: 'nome' });
+    return json(res, 400, { error: 'Nome invalido. Use nome e sobrenome, com no maximo 60 caracteres.' });
+  }
+
+  if (!validarEmail(email)) {
+    await auditLog('VALIDACAO_FALHOU', { email, telefoneNormalizado, motivo: 'email' });
+    return json(res, 400, { error: 'E-mail invalido.' });
+  }
+
+  if (!validarNasc(dataNascimento)) {
+    await auditLog('VALIDACAO_FALHOU', { email, telefoneNormalizado, motivo: 'data_nascimento' });
+    return json(res, 400, { error: `E necessario ter ${IDADE_MINIMA} anos ou mais para se cadastrar.` });
+  }
+
+  if (!validarTel(telefone)) {
+    await auditLog('VALIDACAO_FALHOU', { email, telefoneNormalizado, motivo: 'telefone' });
+    return json(res, 400, { error: 'Telefone invalido.' });
   }
 
   if (await hasDuplicate(email, telefoneNormalizado)) {
