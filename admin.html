@@ -72,9 +72,10 @@
     }
     .section-title i { color: var(--accent); }
 
+    /* ── FILTROS GERAIS ── */
     .filters {
       display: flex; gap: 0.75rem; flex-wrap: wrap;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
     }
     .filters input, .filters select {
       height: 38px; padding: 0 12px;
@@ -86,23 +87,138 @@
     }
     .filters input:focus, .filters select:focus { border-color: var(--accent); }
     .filters select option { background: #1a5c28; }
+    .filters input::placeholder { color: var(--muted); opacity: 0.7; }
 
+    /* ── BLOCO ANIVERSARIANTES ── */
+    .aniv-block {
+      background: rgba(10, 55, 22, 0.7);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1rem 1.25rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .aniv-block-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.85rem; gap: 0.5rem; flex-wrap: wrap;
+    }
+    .aniv-block-title {
+      font-size: 0.8rem; font-weight: 700; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .aniv-counter {
+      font-size: 0.8rem; color: var(--muted);
+      background: rgba(216,172,50,0.1);
+      border: 1px solid rgba(216,172,50,0.2);
+      border-radius: 20px; padding: 2px 10px;
+    }
+    .aniv-counter strong { color: var(--accent-2); }
+
+    /* Filtros rápidos */
+    .quick-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.85rem; }
+    .quick-btn {
+      height: 30px; padding: 0 13px;
+      background: rgba(30, 80, 40, 0.7);
+      border: 1px solid var(--line); border-radius: 20px;
+      color: var(--muted); font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .quick-btn:hover { border-color: var(--accent); color: var(--accent-2); }
+    .quick-btn.ativo {
+      background: rgba(216,172,50,0.18);
+      border-color: var(--accent); color: var(--accent-2);
+    }
+
+    /* Grade de meses */
+    .months-label {
+      font-size: 0.72rem; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .months-grid {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px;
+    }
+    .month-btn {
+      padding: 6px 4px; text-align: center;
+      background: rgba(30, 80, 40, 0.7);
+      border: 1px solid var(--line); border-radius: 6px;
+      color: var(--muted); font-size: 0.77rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      position: relative;
+    }
+    .month-btn:hover { border-color: var(--accent); color: var(--accent-2); }
+    .month-btn.ativo {
+      background: rgba(216,172,50,0.2);
+      border-color: var(--accent); color: var(--accent-2);
+    }
+    .month-btn.atual { border-color: rgba(216,172,50,0.5); }
+    .month-btn .dot {
+      display: block; width: 4px; height: 4px;
+      border-radius: 50%; background: var(--accent);
+      margin: 2px auto 0; opacity: 0.7;
+    }
+    .month-btn:not(.tem-aniv) .dot { display: none; }
+
+    /* Botão limpar aniversariantes */
+    .btn-limpar-aniv {
+      height: 30px; padding: 0 12px;
+      background: transparent; color: var(--muted);
+      border: 1px solid var(--line); border-radius: 6px;
+      font-size: 0.8rem; cursor: pointer;
+      display: flex; align-items: center; gap: 4px;
+      transition: all 0.15s;
+    }
+    .btn-limpar-aniv:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* ── TOOLBAR RESULTADO ── */
+    .toolbar-resultado {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.75rem; margin-bottom: 0.85rem; flex-wrap: wrap;
+    }
+    .resultado-label { font-size: 0.84rem; color: var(--muted); font-weight: 600; }
+    .resultado-label strong { color: var(--accent-2); }
+    .toolbar-actions { display: flex; gap: 8px; align-items: center; }
+
+    /* ── EXPORT ── */
+    .export-group { position: relative; }
     .btn-export {
       height: 38px; padding: 0 16px;
       background: transparent; color: var(--accent-2);
       border: 1px solid var(--accent); border-radius: 6px;
       font-size: 0.88rem; font-weight: 700; cursor: pointer;
       display: flex; align-items: center; gap: 0.4rem;
-      transition: background 0.15s;
-      white-space: nowrap;
+      transition: background 0.15s; white-space: nowrap;
     }
     .btn-export:hover { background: rgba(216,172,50,0.12); }
+    .export-menu {
+      position: absolute; right: 0; top: calc(100% + 6px);
+      background: #0f5c22; border: 1px solid var(--line);
+      border-radius: 10px; box-shadow: var(--shadow);
+      min-width: 210px; z-index: 50; overflow: hidden;
+      display: none;
+    }
+    .export-menu.open { display: block; }
+    .export-section-label {
+      font-size: 0.7rem; font-weight: 700; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.07em;
+      padding: 8px 14px 4px; display: block;
+    }
+    .export-menu button {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 8px 14px;
+      font-size: 0.84rem; color: var(--text);
+      background: none; border: none; cursor: pointer;
+      text-align: left; transition: background 0.1s;
+    }
+    .export-menu button:hover { background: rgba(216,172,50,0.1); }
+    .export-menu button i { font-size: 15px; color: var(--muted); }
+    .export-divider { height: 1px; background: var(--line); margin: 4px 0; }
 
+    /* ── TABELA ── */
     .table-wrap {
       background: var(--surface);
       border: 1px solid var(--line); border-radius: 14px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
+      overflow: hidden; box-shadow: var(--shadow);
     }
     .table-scroll { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
@@ -111,8 +227,7 @@
       color: var(--accent); font-weight: 700;
       font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
       padding: 11px 14px; text-align: left;
-      border-bottom: 1px solid var(--line);
-      white-space: nowrap;
+      border-bottom: 1px solid var(--line); white-space: nowrap;
     }
     tbody tr { border-bottom: 1px solid rgba(201, 160, 54, 0.10); transition: background 0.12s; }
     tbody tr:last-child { border-bottom: none; }
@@ -120,17 +235,26 @@
     tbody td { padding: 10px 14px; color: var(--text); vertical-align: middle; }
     tbody td .muted { color: var(--muted); font-size: 0.82rem; }
 
+    /* Linha de aniversariante hoje */
+    tbody tr.row-aniv-hoje { background: rgba(216,172,50,0.09); }
+    tbody tr.row-aniv-hoje:hover { background: rgba(216,172,50,0.15); }
+    .badge-aniv-hoje {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 0.72rem; background: rgba(216,172,50,0.2);
+      color: var(--accent-2); border: 1px solid rgba(216,172,50,0.35);
+      padding: 2px 7px; border-radius: 20px; font-weight: 700;
+      margin-left: 5px; white-space: nowrap;
+    }
+
     .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
     .empty-state i { font-size: 2rem; color: var(--accent); display: block; margin-bottom: 0.5rem; }
 
     .table-footer {
-      padding: 10px 14px;
-      font-size: 0.82rem; color: var(--muted);
+      padding: 10px 14px; font-size: 0.82rem; color: var(--muted);
       border-top: 1px solid var(--line);
       display: flex; align-items: center; justify-content: space-between;
       gap: 0.5rem; flex-wrap: wrap;
     }
-
     .pagination { display: flex; gap: 6px; align-items: center; }
     .pg-btn {
       height: 30px; min-width: 30px; padding: 0 8px;
@@ -150,6 +274,7 @@
       .topbar-title { font-size: 1rem; }
       .topbar-sub { display: none; }
       .filters { gap: 0.5rem; }
+      .months-grid { grid-template-columns: repeat(4, 1fr); }
     }
   </style>
 </head>
@@ -179,15 +304,65 @@
 <main class="main" id="main-content" style="display:none;">
   <h2 class="section-title"><i class="ti ti-users"></i> Cadastros</h2>
 
+  <!-- Busca geral -->
   <div class="filters">
     <input type="text" id="filtro-busca" placeholder="Buscar por nome ou e-mail…" oninput="filtrar()" />
-    <input type="date" id="filtro-data-ini" onchange="filtrar()" title="Data inicial" />
-    <input type="date" id="filtro-data-fim" onchange="filtrar()" title="Data final" />
-    <button class="btn-export" onclick="exportarCSV()">
-      <i class="ti ti-download"></i> Exportar CSV
+    <button class="btn-logout" style="border-color:var(--line);color:var(--muted);" onclick="limparTudo()">
+      <i class="ti ti-x"></i> Limpar filtros
     </button>
   </div>
 
+  <!-- Bloco aniversariantes -->
+  <div class="aniv-block">
+    <div class="aniv-block-header">
+      <span class="aniv-block-title"><i class="ti ti-cake"></i> Filtrar aniversariantes</span>
+      <span class="aniv-counter" id="aniv-counter" style="display:none;">
+        <strong id="aniv-count">0</strong> encontrado(s)
+      </span>
+    </div>
+
+    <!-- Filtros rápidos -->
+    <div class="quick-btns">
+      <button class="quick-btn" data-q="hoje" onclick="setQuick('hoje', this)">Hoje</button>
+      <button class="quick-btn" data-q="semana" onclick="setQuick('semana', this)">Esta semana</button>
+      <button class="quick-btn" data-q="mes" onclick="setQuick('mes', this)">Este mês</button>
+    </div>
+
+    <!-- Grade de meses -->
+    <div class="months-label">Ou selecione um ou mais meses:</div>
+    <div class="months-grid" id="months-grid"></div>
+  </div>
+
+  <!-- Toolbar resultado + exportação -->
+  <div class="toolbar-resultado">
+    <span class="resultado-label" id="table-info">—</span>
+    <div class="toolbar-actions">
+      <div class="export-group">
+        <button class="btn-export" onclick="toggleExportMenu()">
+          <i class="ti ti-download"></i> Exportar
+        </button>
+        <div class="export-menu" id="export-menu">
+          <span class="export-section-label">Excel (.xlsx)</span>
+          <button onclick="exportar('filtrados','xlsx')">
+            <i class="ti ti-table"></i> Dados filtrados (atual)
+          </button>
+          <button onclick="exportar('todos','xlsx')">
+            <i class="ti ti-database"></i> Todos os cadastros
+          </button>
+          <div class="export-divider"></div>
+          <span class="export-section-label">CSV</span>
+          <button onclick="exportar('filtrados','csv')">
+            <i class="ti ti-file-text"></i> Dados filtrados (atual)
+          </button>
+          <button onclick="exportar('todos','csv')">
+            <i class="ti ti-file-text"></i> Todos os cadastros
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela -->
   <div class="table-wrap">
     <div class="table-scroll">
       <table>
@@ -198,85 +373,85 @@
             <th>E-mail</th>
             <th>Telefone</th>
             <th>Nascimento</th>
+            <th>Idade</th>
             <th>Cadastrado em</th>
           </tr>
         </thead>
         <tbody id="tabela-body">
-          <tr><td colspan="6" class="empty-state"><i class="ti ti-loader-2"></i>Carregando…</td></tr>
+          <tr><td colspan="7" class="empty-state"><i class="ti ti-loader-2"></i>Carregando…</td></tr>
         </tbody>
       </table>
     </div>
     <div class="table-footer">
-      <span id="table-info">—</span>
+      <span id="table-footer-info">—</span>
       <div class="pagination" id="pagination"></div>
     </div>
   </div>
 </main>
 
+<!-- SheetJS para exportação Excel -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
 <script>
-  const API_BASE = '/api';
+  const API_BASE  = '/api';
   const TOKEN_KEY = 'admin-auth-token';
   const PAGE_SIZE = 20;
 
-  let todosRegistros = [];
-  let registrosFiltrados = [];
-  let paginaAtual = 1;
-  let tokenAtivo  = '';
+  const MESES_NOME  = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const MESES_CURTO = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
+  let todosRegistros     = [];
+  let registrosFiltrados = [];
+  let paginaAtual        = 1;
+  let tokenAtivo         = '';
+
+  // Estado dos filtros de aniversariante
+  const anivState = {
+    quick: null,           // 'hoje' | 'semana' | 'mes' | null
+    meses: new Set(),      // conjunto de números 1-12
+  };
+
+  /* ── Token / Sessão ── */
   function obterToken() {
     try {
       const raw = localStorage.getItem(TOKEN_KEY);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
       if (parsed.expires_at && parsed.expires_at < Math.floor(Date.now() / 1000)) {
-        localStorage.removeItem(TOKEN_KEY);
-        return null;
+        localStorage.removeItem(TOKEN_KEY); return null;
       }
       return parsed.access_token ?? null;
     } catch (_) { return null; }
   }
-
-  function limparSessao() {
-    localStorage.removeItem(TOKEN_KEY);
-  }
+  function limparSessao() { localStorage.removeItem(TOKEN_KEY); }
 
   async function lerJsonSeguro(res) {
     const texto = await res.text();
     if (!texto) return {};
-    try {
-      return JSON.parse(texto);
-    } catch (_) {
-      return { error: 'Resposta inválida do servidor. Verifique se as rotas /api estão ativas.' };
-    }
+    try { return JSON.parse(texto); }
+    catch (_) { return { error: 'Resposta inválida do servidor.' }; }
   }
 
   async function verificarSessao() {
     const token = obterToken();
     if (!token) { redirecionarLogin(); return; }
-
     try {
       const res = await fetch(`${API_BASE}/session`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-
       if (!res.ok) { limparSessao(); redirecionarLogin(); return; }
-
       const user = await lerJsonSeguro(res);
       tokenAtivo = token;
-
       document.getElementById('loading-overlay').classList.add('hidden');
       document.getElementById('topbar').style.display       = 'flex';
       document.getElementById('main-content').style.display = 'block';
       document.getElementById('admin-email-badge').textContent = user.email ?? 'admin';
-
+      construirMesesGrid();
       await carregarCadastros();
-
     } catch (_) { limparSessao(); redirecionarLogin(); }
   }
 
-  function redirecionarLogin() {
-    window.location.replace('login.html');
-  }
+  function redirecionarLogin() { window.location.replace('login.html'); }
 
   async function fazerLogout() {
     try {
@@ -289,50 +464,171 @@
     window.location.replace('login.html');
   }
 
-  /* ── Carregar cadastros — usa criado_em (nome real da coluna) ── */
+  /* ── Carregar cadastros ── */
   async function carregarCadastros() {
     try {
       const res = await fetch(`${API_BASE}/cadastros`, {
         headers: { 'Authorization': `Bearer ${tokenAtivo}` }
       });
-
-      if (res.status === 401 || res.status === 403) {
-        limparSessao(); redirecionarLogin(); return;
-      }
-
-      if (!res.ok) {
-        const err = await lerJsonSeguro(res);
-        throw new Error(err.message || res.statusText);
-      }
-
+      if (res.status === 401 || res.status === 403) { limparSessao(); redirecionarLogin(); return; }
+      if (!res.ok) { const err = await lerJsonSeguro(res); throw new Error(err.message || res.statusText); }
       todosRegistros = await lerJsonSeguro(res);
+      atualizarDotsMeses();
       filtrar();
-
     } catch (e) {
       document.getElementById('tabela-body').innerHTML =
-        `<tr><td colspan="6" class="empty-state"><i class="ti ti-alert-circle"></i> Erro ao carregar dados: ${e.message}</td></tr>`;
+        `<tr><td colspan="7" class="empty-state"><i class="ti ti-alert-circle"></i> Erro ao carregar dados: ${e.message}</td></tr>`;
     }
   }
 
+  /* ── Construir grade de meses ── */
+  function construirMesesGrid() {
+    const grid = document.getElementById('months-grid');
+    const hoje = new Date();
+    const mesAtual = hoje.getMonth() + 1;
+    grid.innerHTML = MESES_CURTO.map((nome, i) => {
+      const num = i + 1;
+      const isAtual = num === mesAtual ? ' atual' : '';
+      return `<button class="month-btn${isAtual}" data-mes="${num}" onclick="toggleMes(${num}, this)" title="${MESES_NOME[i]}">
+        ${nome}<span class="dot"></span>
+      </button>`;
+    }).join('');
+  }
+
+  /* Marca com ponto os meses que têm aniversariantes */
+  function atualizarDotsMeses() {
+    const comAniv = new Set(todosRegistros.map(r => parseInt((r.data_nascimento||'').split('-')[1])).filter(Boolean));
+    document.querySelectorAll('.month-btn').forEach(btn => {
+      const num = parseInt(btn.dataset.mes);
+      if (comAniv.has(num)) btn.classList.add('tem-aniv');
+      else btn.classList.remove('tem-aniv');
+    });
+  }
+
+  /* ── Filtros de aniversariante ── */
+  function setQuick(q, el) {
+    // Toggle
+    if (anivState.quick === q) {
+      anivState.quick = null;
+      el.classList.remove('ativo');
+    } else {
+      anivState.quick = q;
+      document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('ativo'));
+      el.classList.add('ativo');
+      // Limpa seleção de meses
+      anivState.meses.clear();
+      document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('ativo'));
+    }
+    filtrar();
+  }
+
+  function toggleMes(num, el) {
+    // Limpa filtro rápido ao selecionar mês
+    anivState.quick = null;
+    document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('ativo'));
+
+    if (anivState.meses.has(num)) {
+      anivState.meses.delete(num);
+      el.classList.remove('ativo');
+    } else {
+      anivState.meses.add(num);
+      el.classList.add('ativo');
+    }
+    filtrar();
+  }
+
+  function limparAniv() {
+    anivState.quick = null;
+    anivState.meses.clear();
+    document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('ativo'));
+    document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('ativo'));
+    filtrar();
+  }
+
+  function limparTudo() {
+    document.getElementById('filtro-busca').value = '';
+    limparAniv();
+  }
+
+  /* ── Filtrar ── */
   function filtrar() {
-    const busca   = document.getElementById('filtro-busca').value.trim().toLowerCase();
-    const dataIni = document.getElementById('filtro-data-ini').value;
-    const dataFim = document.getElementById('filtro-data-fim').value;
+    const busca = document.getElementById('filtro-busca').value.trim().toLowerCase();
+    const hoje  = new Date();
+    const mesAtual = hoje.getMonth() + 1;
+    const diaAtual = hoje.getDate();
+
+    // Início da semana corrente (domingo = 0)
+    const inicioSem = new Date(hoje);
+    inicioSem.setDate(hoje.getDate() - hoje.getDay());
+    inicioSem.setHours(0,0,0,0);
+    const fimSem = new Date(inicioSem);
+    fimSem.setDate(inicioSem.getDate() + 6);
+    fimSem.setHours(23,59,59,999);
 
     registrosFiltrados = todosRegistros.filter(r => {
-      const matchBusca = !busca ||
+      // Busca texto
+      if (busca && !(
         (r.nome  && r.nome.toLowerCase().includes(busca)) ||
-        (r.email && r.email.toLowerCase().includes(busca));
-      const nascDate = r.data_nascimento ?? '';
-      const matchIni = !dataIni || nascDate >= dataIni;
-      const matchFim = !dataFim || nascDate <= dataFim;
-      return matchBusca && matchIni && matchFim;
+        (r.email && r.email.toLowerCase().includes(busca))
+      )) return false;
+
+      // Filtro aniversariante
+      const [,mStr,dStr] = (r.data_nascimento||'').split('-');
+      const mesNasc = parseInt(mStr) || 0;
+      const diaNasc = parseInt(dStr) || 0;
+
+      const q = anivState.quick;
+      if (q === 'hoje') {
+        if (mesNasc !== mesAtual || diaNasc !== diaAtual) return false;
+      } else if (q === 'semana') {
+        // Verifica se o aniversário (no ano atual) cai nesta semana
+        if (!mesNasc || !diaNasc) return false;
+        const anivEsteAno = new Date(hoje.getFullYear(), mesNasc-1, diaNasc);
+        if (anivEsteAno < inicioSem || anivEsteAno > fimSem) return false;
+      } else if (q === 'mes') {
+        if (mesNasc !== mesAtual) return false;
+      } else if (anivState.meses.size > 0) {
+        if (!anivState.meses.has(mesNasc)) return false;
+      }
+
+      return true;
     });
+
+    // Ordenação: se filtro de aniversariante ativo, ordena por dia/mês
+    const anivAtivo = anivState.quick || anivState.meses.size > 0;
+    if (anivAtivo) {
+      registrosFiltrados.sort((a, b) => {
+        const [,am,ad] = (a.data_nascimento||'').split('-').map(Number);
+        const [,bm,bd] = (b.data_nascimento||'').split('-').map(Number);
+        if (am !== bm) return am - bm;
+        return ad - bd;
+      });
+    }
+
+    // Atualiza contador de aniversariantes
+    const counterEl = document.getElementById('aniv-counter');
+    if (anivAtivo) {
+      document.getElementById('aniv-count').textContent = registrosFiltrados.length;
+      counterEl.style.display = 'inline-block';
+    } else {
+      counterEl.style.display = 'none';
+    }
 
     paginaAtual = 1;
     renderTabela();
   }
 
+  /* ── Calcular idade ── */
+  function calcularIdade(dataNasc) {
+    if (!dataNasc) return '—';
+    const [ano, mes, dia] = dataNasc.split('-').map(Number);
+    const hoje = new Date();
+    let idade = hoje.getFullYear() - ano;
+    if (hoje.getMonth() + 1 < mes || (hoje.getMonth() + 1 === mes && hoje.getDate() < dia)) idade--;
+    return idade;
+  }
+
+  /* ── Renderizar tabela ── */
   function renderTabela() {
     const tbody = document.getElementById('tabela-body');
     const total = registrosFiltrados.length;
@@ -342,22 +638,36 @@
     const inicio = (paginaAtual - 1) * PAGE_SIZE;
     const pagina = registrosFiltrados.slice(inicio, inicio + PAGE_SIZE);
 
+    const hoje     = new Date();
+    const mesAtual = hoje.getMonth() + 1;
+    const diaAtual = hoje.getDate();
+
     if (pagina.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="ti ti-search"></i>Nenhum cadastro encontrado.</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><i class="ti ti-search"></i>Nenhum cadastro encontrado.</td></tr>`;
     } else {
-      tbody.innerHTML = pagina.map((r, i) => `
-        <tr>
-          <td class="muted">${inicio + i + 1}</td>
-          <td>${esc(r.nome ?? '—')}</td>
-          <td>${esc(r.email ?? '—')}</td>
-          <td>${esc(r.telefone ?? '—')}</td>
-          <td>${formatarData(r.data_nascimento)}</td>
-          <td class="muted">${formatarDataHora(r.criado_em)}</td>
-        </tr>`).join('');
+      tbody.innerHTML = pagina.map((r, i) => {
+        const [,mStr,dStr] = (r.data_nascimento||'').split('-');
+        const ehAnivHoje = parseInt(mStr) === mesAtual && parseInt(dStr) === diaAtual;
+        const rowClass = ehAnivHoje ? ' class="row-aniv-hoje"' : '';
+        const badgeHoje = ehAnivHoje ? `<span class="badge-aniv-hoje">🎂 Hoje!</span>` : '';
+        const idade = calcularIdade(r.data_nascimento);
+        return `
+          <tr${rowClass}>
+            <td><span class="muted">${inicio + i + 1}</span></td>
+            <td>${esc(r.nome ?? '—')}${badgeHoje}</td>
+            <td><span class="muted">${esc(r.email ?? '—')}</span></td>
+            <td>${esc(r.telefone ?? '—')}</td>
+            <td>${formatarData(r.data_nascimento)}</td>
+            <td><span class="muted">${idade !== '—' ? idade + ' anos' : '—'}</span></td>
+            <td><span class="muted">${formatarDataHora(r.criado_em)}</span></td>
+          </tr>`;
+      }).join('');
     }
 
-    document.getElementById('table-info').textContent =
-      `${total} registro${total !== 1 ? 's' : ''} encontrado${total !== 1 ? 's' : ''}`;
+    document.getElementById('table-info').innerHTML =
+      `<strong>${total}</strong> registro${total !== 1 ? 's' : ''} encontrado${total !== 1 ? 's' : ''}`;
+    document.getElementById('table-footer-info').textContent =
+      `Página ${paginaAtual} de ${totalPag} — ${total} registro${total !== 1 ? 's' : ''}`;
 
     renderPaginacao(totalPag);
   }
@@ -365,11 +675,10 @@
   function renderPaginacao(totalPag) {
     const pg = document.getElementById('pagination');
     if (totalPag <= 1) { pg.innerHTML = ''; return; }
-
     let html = `<button class="pg-btn" onclick="irPagina(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled' : ''}><i class="ti ti-chevron-left"></i></button>`;
     for (let p = 1; p <= totalPag; p++) {
-      if (totalPag > 7 && (p > 2 && p < paginaAtual - 1)) { if (p === 3) html += '<span style="color:var(--muted);padding:0 4px">…</span>'; continue; }
-      if (totalPag > 7 && (p < totalPag - 1 && p > paginaAtual + 1)) { if (p === totalPag - 2) html += '<span style="color:var(--muted);padding:0 4px">…</span>'; continue; }
+      if (totalPag > 7 && p > 2 && p < paginaAtual - 1) { if (p === 3) html += '<span style="color:var(--muted);padding:0 4px">…</span>'; continue; }
+      if (totalPag > 7 && p < totalPag - 1 && p > paginaAtual + 1) { if (p === totalPag - 2) html += '<span style="color:var(--muted);padding:0 4px">…</span>'; continue; }
       html += `<button class="pg-btn ${p === paginaAtual ? 'active' : ''}" onclick="irPagina(${p})">${p}</button>`;
     }
     html += `<button class="pg-btn" onclick="irPagina(${paginaAtual + 1})" ${paginaAtual === totalPag ? 'disabled' : ''}><i class="ti ti-chevron-right"></i></button>`;
@@ -382,30 +691,123 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function exportarCSV() {
-    if (!registrosFiltrados.length) return;
-    const cab = ['#', 'Nome', 'E-mail', 'Telefone', 'Data Nascimento', 'Cadastrado em'];
-    const linhas = registrosFiltrados.map((r, i) => [
+  /* ── Export Menu ── */
+  function toggleExportMenu() {
+    document.getElementById('export-menu').classList.toggle('open');
+  }
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.export-group')) {
+      document.getElementById('export-menu').classList.remove('open');
+    }
+  });
+
+  /* ── Exportação organizada ── */
+  function exportar(tipo, formato) {
+    document.getElementById('export-menu').classList.remove('open');
+
+    const hoje = new Date();
+    const mesAtual = hoje.getMonth() + 1;
+    const diaAtual = hoje.getDate();
+
+    let dados = tipo === 'todos' ? todosRegistros : registrosFiltrados;
+    if (dados.length === 0) { alert('Nenhum dado para exportar.'); return; }
+
+    // Nome do arquivo com sufixo do filtro ativo
+    let sufixo = '';
+    if (tipo === 'filtrados') {
+      const q = anivState.quick;
+      if (q === 'hoje') sufixo = '_aniversariantes_hoje';
+      else if (q === 'semana') sufixo = '_aniversariantes_semana';
+      else if (q === 'mes') sufixo = '_aniversariantes_mes';
+      else if (anivState.meses.size > 0) {
+        const nomes = [...anivState.meses].sort((a,b)=>a-b).map(m => MESES_CURTO[m-1]);
+        sufixo = `_aniversariantes_${nomes.join('-')}`;
+      } else {
+        sufixo = '_filtrados';
+      }
+    } else {
+      sufixo = '_todos';
+    }
+
+    const nomeBase = `bembrasil${sufixo}_${hoje.toISOString().slice(0,10)}`;
+
+    if (formato === 'csv') {
+      exportarCSV(dados, nomeBase);
+    } else {
+      exportarXLSX(dados, nomeBase);
+    }
+  }
+
+  function montarLinhas(dados) {
+    return dados.map((r, i) => [
       i + 1,
-      csvCell(r.nome),
-      csvCell(r.email),
-      csvCell(r.telefone),
+      r.nome    ?? '',
+      r.email   ?? '',
+      r.telefone ?? '',
       formatarData(r.data_nascimento),
-      formatarDataHora(r.criado_em)
-    ].join(';'));
-    const blob = new Blob(['\uFEFF' + [cab.join(';'), ...linhas].join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+      calcularIdade(r.data_nascimento) !== '—' ? calcularIdade(r.data_nascimento) : '',
+      formatarDataHora(r.criado_em),
+    ]);
+  }
+
+  function exportarXLSX(dados, nomeBase) {
+    const cabecalho = ['#', 'Nome', 'E-mail', 'Telefone', 'Data de Nascimento', 'Idade', 'Cadastrado em'];
+    const linhas    = montarLinhas(dados);
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet([cabecalho, ...linhas]);
+
+    // Largura de colunas automática
+    ws['!cols'] = [
+      { wch: 5  },  // #
+      { wch: 30 },  // Nome
+      { wch: 32 },  // E-mail
+      { wch: 18 },  // Telefone
+      { wch: 20 },  // Data Nascimento
+      { wch: 10 },  // Idade
+      { wch: 20 },  // Cadastrado em
+    ];
+
+    // Cabeçalho em negrito
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    for (let C = range.s.c; C <= range.e.c; C++) {
+      const cell = ws[XLSX.utils.encode_cell({ r: 0, c: C })];
+      if (cell) {
+        cell.s = {
+          font: { bold: true, sz: 11 },
+          fill: { fgColor: { rgb: 'D8AC32' } },
+          alignment: { horizontal: 'center', vertical: 'center' },
+          border: {
+            bottom: { style: 'thin', color: { rgb: '8A6515' } }
+          }
+        };
+      }
+    }
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Cadastros');
+    XLSX.writeFile(wb, nomeBase + '.xlsx');
+  }
+
+  function exportarCSV(dados, nomeBase) {
+    const cab   = ['#','Nome','E-mail','Telefone','Data de Nascimento','Idade','Cadastrado em'];
+    const linhas = montarLinhas(dados);
+    const csv = [cab, ...linhas]
+      .map(r => r.map(v => {
+        const s = String(v ?? '');
+        return s.includes(';') || s.includes('"') || s.includes('\n')
+          ? `"${s.replace(/"/g,'""')}"` : s;
+      }).join(';'))
+      .join('\r\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
     const url  = URL.createObjectURL(blob);
-    const a    = Object.assign(document.createElement('a'), { href: url, download: `cadastros_bembrasil_${new Date().toISOString().slice(0,10)}.csv` });
+    const a    = Object.assign(document.createElement('a'), { href: url, download: nomeBase + '.csv' });
     a.click();
     URL.revokeObjectURL(url);
   }
 
+  /* ── Utilitários ── */
   function esc(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-  function csvCell(v) {
-    const s = String(v ?? '');
-    return s.includes(';') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g,'""')}"` : s;
   }
   function formatarData(v) {
     if (!v) return '—';
@@ -418,11 +820,9 @@
     return `${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })}`;
   }
 
+  /* ── Init ── */
   verificarSessao();
-
-  setInterval(() => {
-    if (!obterToken()) redirecionarLogin();
-  }, 60_000);
+  setInterval(() => { if (!obterToken()) redirecionarLogin(); }, 60_000);
 </script>
 </body>
 </html>
