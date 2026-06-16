@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <!-- Cloudflare Turnstile -->
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit" async defer></script>
   <style>
     :root {
       --bg: #0d5a22;
@@ -148,7 +148,7 @@
       display: flex;
       justify-content: center;
       margin-top: 1rem;
-      min-height: 0px; /* invisível — sem espaço extra */
+      min-height: 68px;
     }
 
     /* Badge de status do captcha */
@@ -367,7 +367,6 @@
     turnstileWidget = turnstile.render('#turnstile-wrap', {
       sitekey:  TURNSTILE_KEY,
       theme:    'dark',
-      size:     'invisible',
       callback: function (token) {
         turnstileToken = token;
         setCaptchaStatus('ok', 'Verificação concluída');
