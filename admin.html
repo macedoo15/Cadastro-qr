@@ -3,202 +3,419 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel Admin — Cadastros</title>
+  <title>Painel Administrativo | Bem Brasil</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
-  <link rel="stylesheet" href="admin.css" />
+  <style>
+    :root {
+      --bg: #0d5a22; --surface: rgba(21, 94, 38, 0.92);
+      --surface2: rgba(10, 60, 20, 0.85);
+      --text: #f7f1d7; --muted: #bbd09b;
+      --line: rgba(201, 160, 54, 0.26);
+      --accent: #d8ac32; --accent-2: #f1cf63; --accent-3: #8a6515;
+      --danger: #ff806f;
+      --shadow: 0 24px 60px rgba(3, 30, 8, 0.36);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif; color: var(--text);
+      background: linear-gradient(180deg, #0a4d1c 0%, var(--bg) 36%, #084017 100%);
+      min-height: 100vh;
+    }
+
+    #loading-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #0a4d1c;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1rem;
+      transition: opacity 0.3s ease;
+    }
+    #loading-overlay.hidden { opacity: 0; pointer-events: none; }
+    #loading-overlay i { font-size: 2.5rem; color: var(--accent); animation: spin 1s linear infinite; }
+    #loading-overlay p { color: var(--muted); font-size: 0.9rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .topbar {
+      background: linear-gradient(90deg, #0f6b28, #0d5a22);
+      border-bottom: 2px solid var(--accent);
+      padding: 0.75rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem;
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 0.75rem; }
+    .topbar-logo { width: 40px; height: 40px; object-fit: contain; }
+    .topbar-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--text); }
+    .topbar-sub { font-size: 0.75rem; color: var(--muted); }
+    .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+    .admin-badge { font-size: 0.78rem; color: var(--accent); background: rgba(216,172,50,0.12); border: 1px solid rgba(216,172,50,0.28); border-radius: 6px; padding: 3px 10px; }
+    .btn-logout {
+      height: 36px; padding: 0 14px;
+      background: transparent; color: #ffd8d3;
+      border: 1px solid rgba(255,128,111,0.4); border-radius: 6px;
+      font-size: 0.84rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; gap: 0.4rem;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-logout:hover { background: rgba(255,128,111,0.12); border-color: rgba(255,128,111,0.6); }
+
+    .main { max-width: 960px; margin: 0 auto; padding: 1.75rem 1.25rem; }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem; font-weight: 700;
+      color: var(--text); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.55rem;
+    }
+    .section-title i { color: var(--accent); }
+
+    .filters {
+      display: flex; gap: 0.75rem; flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .filters input, .filters select {
+      height: 38px; padding: 0 12px;
+      background: rgba(30, 80, 40, 0.8);
+      border: 1px solid var(--line); border-radius: 6px;
+      color: var(--text); font-size: 0.9rem; outline: none;
+      transition: border-color 0.2s;
+      flex: 1; min-width: 160px;
+    }
+    .filters input:focus, .filters select:focus { border-color: var(--accent); }
+    .filters select option { background: #1a5c28; }
+
+    .btn-export {
+      height: 38px; padding: 0 16px;
+      background: transparent; color: var(--accent-2);
+      border: 1px solid var(--accent); border-radius: 6px;
+      font-size: 0.88rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; gap: 0.4rem;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .btn-export:hover { background: rgba(216,172,50,0.12); }
+
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--line); border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    thead th {
+      background: rgba(10, 55, 22, 0.9);
+      color: var(--accent); font-weight: 700;
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 11px 14px; text-align: left;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid rgba(201, 160, 54, 0.10); transition: background 0.12s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(216, 172, 50, 0.06); }
+    tbody td { padding: 10px 14px; color: var(--text); vertical-align: middle; }
+    tbody td .muted { color: var(--muted); font-size: 0.82rem; }
+
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+    .empty-state i { font-size: 2rem; color: var(--accent); display: block; margin-bottom: 0.5rem; }
+
+    .table-footer {
+      padding: 10px 14px;
+      font-size: 0.82rem; color: var(--muted);
+      border-top: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.5rem; flex-wrap: wrap;
+    }
+
+    .pagination { display: flex; gap: 6px; align-items: center; }
+    .pg-btn {
+      height: 30px; min-width: 30px; padding: 0 8px;
+      background: transparent; color: var(--text);
+      border: 1px solid var(--line); border-radius: 6px;
+      font-size: 0.82rem; cursor: pointer; transition: background 0.12s;
+    }
+    .pg-btn:hover { background: rgba(216,172,50,0.1); }
+    .pg-btn.active { background: rgba(216,172,50,0.2); border-color: var(--accent); color: var(--accent-2); font-weight: 700; }
+    .pg-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .main { animation: fadeUp 0.6s ease both; }
+
+    @media (max-width: 600px) {
+      .topbar { padding: 0.6rem 1rem; }
+      .topbar-title { font-size: 1rem; }
+      .topbar-sub { display: none; }
+      .filters { gap: 0.5rem; }
+    }
+  </style>
 </head>
-<body class="admin-page">
+<body>
 
-  <!-- Header -->
-  <header class="admin-header">
-    <div class="header-left">
-      <div class="header-logo"><i class="ti ti-database"></i></div>
-      <div>
-        <h1 class="header-title">Painel de Cadastros</h1>
-        <p class="header-sub">Gerenciamento de leads via QR Code</p>
-      </div>
-    </div>
-    <div class="header-right">
-      <span class="realtime-badge" id="realtime-badge"><span class="dot"></span> Ao vivo</span>
-      <button class="btn-icon" onclick="carregarCadastros()" title="Atualizar"><i class="ti ti-refresh" id="icon-refresh"></i></button>
-      <button class="btn-icon btn-danger-soft" onclick="sair()" title="Sair"><i class="ti ti-logout"></i></button>
-    </div>
-  </header>
+<div id="loading-overlay">
+  <i class="ti ti-loader-2"></i>
+  <p>Verificando acesso...</p>
+</div>
 
-  <main class="admin-main">
-
-    <!-- Estatísticas -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon green"><i class="ti ti-users"></i></div>
-        <div><p class="stat-label">Total de cadastros</p><p class="stat-value" id="total-cadastros">—</p></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon blue"><i class="ti ti-calendar-plus"></i></div>
-        <div><p class="stat-label">Cadastros hoje</p><p class="stat-value" id="total-hoje">—</p></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon purple"><i class="ti ti-cake"></i></div>
-        <div><p class="stat-label">Aniversariantes do mês</p><p class="stat-value" id="total-aniv-mes">—</p></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon orange"><i class="ti ti-star"></i></div>
-        <div><p class="stat-label">Aniversariantes hoje</p><p class="stat-value" id="total-aniv-hoje">—</p></div>
-      </div>
-    </div>
-
-    <!-- Busca -->
-    <div class="toolbar">
-      <div class="toolbar-search">
-        <div class="search-field">
-          <i class="ti ti-search"></i>
-          <input type="text" id="busca-nome" placeholder="Buscar por nome..." oninput="aplicarFiltros()" />
-        </div>
-        <div class="search-field">
-          <i class="ti ti-mail"></i>
-          <input type="text" id="busca-email" placeholder="Buscar por e-mail..." oninput="aplicarFiltros()" />
-        </div>
-        <div class="search-field">
-          <i class="ti ti-phone"></i>
-          <input type="text" id="busca-tel" placeholder="Buscar por telefone..." oninput="aplicarFiltros()" />
-        </div>
-      </div>
-    </div>
-
-    <!-- Filtros avançados -->
-    <div class="filtros-card">
-      <div class="filtros-header" onclick="toggleFiltros()">
-        <span><i class="ti ti-filter"></i> Filtros avançados</span>
-        <i class="ti ti-chevron-down" id="filtros-chevron"></i>
-      </div>
-      <div class="filtros-body" id="filtros-body">
-
-        <!-- Período de cadastro -->
-        <div class="filtro-grupo">
-          <p class="filtro-titulo">Período de cadastro</p>
-          <div class="filtro-chips">
-            <button class="chip" data-filtro="periodo" data-val="hoje"    onclick="selecionarChip(this)">Hoje</button>
-            <button class="chip" data-filtro="periodo" data-val="7dias"   onclick="selecionarChip(this)">Últimos 7 dias</button>
-            <button class="chip" data-filtro="periodo" data-val="30dias"  onclick="selecionarChip(this)">Últimos 30 dias</button>
-            <button class="chip" data-filtro="periodo" data-val="custom"  onclick="selecionarChip(this)">Personalizado</button>
-          </div>
-          <div class="filtro-custom-datas" id="custom-datas" style="display:none;">
-            <input type="date" id="data-inicio" onchange="aplicarFiltros()" placeholder="De" />
-            <span>até</span>
-            <input type="date" id="data-fim" onchange="aplicarFiltros()" placeholder="Até" />
-          </div>
-        </div>
-
-        <!-- Aniversariantes -->
-        <div class="filtro-grupo">
-          <p class="filtro-titulo">Aniversariantes</p>
-          <div class="filtro-chips">
-            <button class="chip" data-filtro="aniv" data-val="aniv-hoje"   onclick="selecionarChip(this)">Hoje</button>
-            <button class="chip" data-filtro="aniv" data-val="aniv-semana" onclick="selecionarChip(this)">Essa semana</button>
-            <button class="chip" data-filtro="aniv" data-val="aniv-mes"    onclick="selecionarChip(this)">Esse mês</button>
-          </div>
-          <div class="filtro-chips" style="margin-top:6px;">
-            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-1"  onclick="selecionarChip(this)">Jan</button>
-            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-2"  onclick="selecionarChip(this)">Fev</button>
-            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-3"  onclick="selecionarChip(this)">Mar</button>
-            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-4"  onclick="selecionarChip(this)">Abr</button>
-            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-5"  onclick="selecionarChip(this)">Mai</button>
-            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-6"  onclick="selecionarChip(this)">Jun</button>
-            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-7"  onclick="selecionarChip(this)">Jul</button>
-            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-8"  onclick="selecionarChip(this)">Ago</button>
-            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-9"  onclick="selecionarChip(this)">Set</button>
-            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-10" onclick="selecionarChip(this)">Out</button>
-            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-11" onclick="selecionarChip(this)">Nov</button>
-            <button class="chip chip-mes" data-filtro="aniv" data-val="mes-12" onclick="selecionarChip(this)">Dez</button>
-          </div>
-        </div>
-
-        <div class="filtros-actions">
-          <button class="btn-secondary" onclick="limparFiltros()"><i class="ti ti-x"></i> Limpar filtros</button>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Resultado + Exportação -->
-    <div class="toolbar toolbar-result">
-      <p class="resultado-label" id="resultado-label">Carregando...</p>
-      <div class="toolbar-actions">
-        <div class="export-group">
-          <button class="btn-secondary" onclick="abrirExport()">
-            <i class="ti ti-table-export"></i> Exportar <i class="ti ti-chevron-down"></i>
-          </button>
-          <div class="export-menu" id="export-menu" style="display:none;">
-            <button onclick="exportar('todos','csv')"><i class="ti ti-file-text"></i> Todos — CSV</button>
-            <button onclick="exportar('todos','xlsx')"><i class="ti ti-file-spreadsheet"></i> Todos — Excel</button>
-            <div class="export-divider"></div>
-            <button onclick="exportar('filtrados','csv')"><i class="ti ti-filter"></i> Filtrados — CSV</button>
-            <button onclick="exportar('filtrados','xlsx')"><i class="ti ti-filter"></i> Filtrados — Excel</button>
-            <div class="export-divider"></div>
-            <button onclick="exportar('aniv-hoje','csv')"><i class="ti ti-cake"></i> Aniv. hoje — CSV</button>
-            <button onclick="exportar('aniv-semana','csv')"><i class="ti ti-cake"></i> Aniv. semana — CSV</button>
-            <button onclick="exportar('aniv-mes','csv')"><i class="ti ti-cake"></i> Aniv. mês — CSV</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tabela -->
-    <div class="table-card">
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th class="sortable" onclick="ordenar('nome')">Nome <i class="ti ti-arrows-sort" id="sort-nome"></i></th>
-              <th class="sortable" onclick="ordenar('email')">E-mail <i class="ti ti-arrows-sort" id="sort-email"></i></th>
-              <th class="sortable" onclick="ordenar('data_nascimento')">Nascimento <i class="ti ti-arrows-sort" id="sort-data_nascimento"></i></th>
-              <th>Telefone</th>
-              <th class="sortable" onclick="ordenar('criado_em')">Cadastrado em <i class="ti ti-arrows-sort" id="sort-criado_em"></i></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="tabela-body"></tbody>
-        </table>
-      </div>
-
-      <div class="empty-state" id="empty-state" style="display:none;">
-        <i class="ti ti-inbox"></i>
-        <p>Nenhum cadastro encontrado</p>
-        <span>Tente ajustar os filtros ou aguarde novos cadastros.</span>
-      </div>
-
-      <div class="loading-state" id="loading-state">
-        <i class="ti ti-loader-2 spin"></i>
-        <p>Carregando cadastros...</p>
-      </div>
-
-      <div class="pagination" id="paginacao" style="display:none;">
-        <button class="btn-page" id="btn-prev" onclick="mudarPagina(-1)"><i class="ti ti-chevron-left"></i> Anterior</button>
-        <span class="page-info" id="page-info"></span>
-        <button class="btn-page" id="btn-next" onclick="mudarPagina(1)">Próxima <i class="ti ti-chevron-right"></i></button>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- Modal -->
-  <div class="modal-overlay" id="modal" onclick="fecharModal(event)">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h2 class="modal-title"><i class="ti ti-user-circle"></i> Detalhes do Cadastro</h2>
-        <button class="modal-close" onclick="fecharModalBtn()"><i class="ti ti-x"></i></button>
-      </div>
-      <div class="modal-body" id="modal-body"></div>
+<header class="topbar" id="topbar" style="display:none;">
+  <div class="topbar-brand">
+    <img class="topbar-logo" src="logo.png" alt="Bem Brasil" onerror="this.style.display='none';" />
+    <div>
+      <div class="topbar-title">Bem Brasil</div>
+      <div class="topbar-sub">Painel Administrativo</div>
     </div>
   </div>
+  <div class="topbar-right">
+    <span class="admin-badge" id="admin-email-badge">admin</span>
+    <button class="btn-logout" onclick="fazerLogout()">
+      <i class="ti ti-logout"></i> Sair
+    </button>
+  </div>
+</header>
 
-  <!-- Toast -->
-  <div class="toast" id="toast"></div>
+<main class="main" id="main-content" style="display:none;">
+  <h2 class="section-title"><i class="ti ti-users"></i> Cadastros</h2>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="auth.js"></script>
-  <script src="admin.js"></script>
+  <div class="filters">
+    <input type="text" id="filtro-busca" placeholder="Buscar por nome ou e-mail…" oninput="filtrar()" />
+    <input type="date" id="filtro-data-ini" onchange="filtrar()" title="Data inicial" />
+    <input type="date" id="filtro-data-fim" onchange="filtrar()" title="Data final" />
+    <button class="btn-export" onclick="exportarCSV()">
+      <i class="ti ti-download"></i> Exportar CSV
+    </button>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Telefone</th>
+            <th>Nascimento</th>
+            <th>Cadastrado em</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-body">
+          <tr><td colspan="6" class="empty-state"><i class="ti ti-loader-2"></i>Carregando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <span id="table-info">—</span>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const SUPABASE_URL = 'https://vtbrvwagyhlbuuitwfpe.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0YnJ2d2FneWhsYnV1aXR3ZnBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NjA2ODgsImV4cCI6MjA5NjUzNjY4OH0.nUBMV8LcQHMCj45ZEFpGZHpV_5pWzCprWRe2X26Jbt0';
+  const PAGE_SIZE = 20;
+
+  let todosRegistros = [];
+  let registrosFiltrados = [];
+  let paginaAtual = 1;
+  let tokenAtivo  = '';
+
+  function obterToken() {
+    try {
+      const key = `sb-${SUPABASE_URL.split('//')[1].split('.')[0]}-auth-token`;
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (parsed.expires_at && parsed.expires_at < Math.floor(Date.now() / 1000)) {
+        localStorage.removeItem(key);
+        return null;
+      }
+      return parsed.access_token ?? null;
+    } catch (_) { return null; }
+  }
+
+  function limparSessao() {
+    const key = `sb-${SUPABASE_URL.split('//')[1].split('.')[0]}-auth-token`;
+    localStorage.removeItem(key);
+  }
+
+  async function verificarSessao() {
+    const token = obterToken();
+    if (!token) { redirecionarLogin(); return; }
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!res.ok) { limparSessao(); redirecionarLogin(); return; }
+
+      const user = await res.json();
+      tokenAtivo = token;
+
+      document.getElementById('loading-overlay').classList.add('hidden');
+      document.getElementById('topbar').style.display       = 'flex';
+      document.getElementById('main-content').style.display = 'block';
+      document.getElementById('admin-email-badge').textContent = user.email ?? 'admin';
+
+      await carregarCadastros();
+
+    } catch (_) { limparSessao(); redirecionarLogin(); }
+  }
+
+  function redirecionarLogin() {
+    window.location.replace('login.html');
+  }
+
+  async function fazerLogout() {
+    try {
+      await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${tokenAtivo}` }
+      });
+    } catch (_) {}
+    limparSessao();
+    window.location.replace('login.html');
+  }
+
+  /* ── Carregar cadastros — usa criado_em (nome real da coluna) ── */
+  async function carregarCadastros() {
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/cadastros?select=id,nome,email,telefone,data_nascimento,criado_em&order=criado_em.desc`,
+        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${tokenAtivo}` } }
+      );
+
+      if (res.status === 401 || res.status === 403) {
+        limparSessao(); redirecionarLogin(); return;
+      }
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || res.statusText);
+      }
+
+      todosRegistros = await res.json();
+      filtrar();
+
+    } catch (e) {
+      document.getElementById('tabela-body').innerHTML =
+        `<tr><td colspan="6" class="empty-state"><i class="ti ti-alert-circle"></i> Erro ao carregar dados: ${e.message}</td></tr>`;
+    }
+  }
+
+  function filtrar() {
+    const busca   = document.getElementById('filtro-busca').value.trim().toLowerCase();
+    const dataIni = document.getElementById('filtro-data-ini').value;
+    const dataFim = document.getElementById('filtro-data-fim').value;
+
+    registrosFiltrados = todosRegistros.filter(r => {
+      const matchBusca = !busca ||
+        (r.nome  && r.nome.toLowerCase().includes(busca)) ||
+        (r.email && r.email.toLowerCase().includes(busca));
+      const nascDate = r.data_nascimento ?? '';
+      const matchIni = !dataIni || nascDate >= dataIni;
+      const matchFim = !dataFim || nascDate <= dataFim;
+      return matchBusca && matchIni && matchFim;
+    });
+
+    paginaAtual = 1;
+    renderTabela();
+  }
+
+  function renderTabela() {
+    const tbody = document.getElementById('tabela-body');
+    const total = registrosFiltrados.length;
+    const totalPag = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (paginaAtual > totalPag) paginaAtual = totalPag;
+
+    const inicio = (paginaAtual - 1) * PAGE_SIZE;
+    const pagina = registrosFiltrados.slice(inicio, inicio + PAGE_SIZE);
+
+    if (pagina.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="ti ti-search"></i>Nenhum cadastro encontrado.</td></tr>';
+    } else {
+      tbody.innerHTML = pagina.map((r, i) => `
+        <tr>
+          <td class="muted">${inicio + i + 1}</td>
+          <td>${esc(r.nome ?? '—')}</td>
+          <td>${esc(r.email ?? '—')}</td>
+          <td>${esc(r.telefone ?? '—')}</td>
+          <td>${formatarData(r.data_nascimento)}</td>
+          <td class="muted">${formatarDataHora(r.criado_em)}</td>
+        </tr>`).join('');
+    }
+
+    document.getElementById('table-info').textContent =
+      `${total} registro${total !== 1 ? 's' : ''} encontrado${total !== 1 ? 's' : ''}`;
+
+    renderPaginacao(totalPag);
+  }
+
+  function renderPaginacao(totalPag) {
+    const pg = document.getElementById('pagination');
+    if (totalPag <= 1) { pg.innerHTML = ''; return; }
+
+    let html = `<button class="pg-btn" onclick="irPagina(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled' : ''}><i class="ti ti-chevron-left"></i></button>`;
+    for (let p = 1; p <= totalPag; p++) {
+      if (totalPag > 7 && (p > 2 && p < paginaAtual - 1)) { if (p === 3) html += '<span style="color:var(--muted);padding:0 4px">…</span>'; continue; }
+      if (totalPag > 7 && (p < totalPag - 1 && p > paginaAtual + 1)) { if (p === totalPag - 2) html += '<span style="color:var(--muted);padding:0 4px">…</span>'; continue; }
+      html += `<button class="pg-btn ${p === paginaAtual ? 'active' : ''}" onclick="irPagina(${p})">${p}</button>`;
+    }
+    html += `<button class="pg-btn" onclick="irPagina(${paginaAtual + 1})" ${paginaAtual === totalPag ? 'disabled' : ''}><i class="ti ti-chevron-right"></i></button>`;
+    pg.innerHTML = html;
+  }
+
+  function irPagina(p) {
+    paginaAtual = p;
+    renderTabela();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function exportarCSV() {
+    if (!registrosFiltrados.length) return;
+    const cab = ['#', 'Nome', 'E-mail', 'Telefone', 'Data Nascimento', 'Cadastrado em'];
+    const linhas = registrosFiltrados.map((r, i) => [
+      i + 1,
+      csvCell(r.nome),
+      csvCell(r.email),
+      csvCell(r.telefone),
+      formatarData(r.data_nascimento),
+      formatarDataHora(r.criado_em)
+    ].join(';'));
+    const blob = new Blob(['\uFEFF' + [cab.join(';'), ...linhas].join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = Object.assign(document.createElement('a'), { href: url, download: `cadastros_bembrasil_${new Date().toISOString().slice(0,10)}.csv` });
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function csvCell(v) {
+    const s = String(v ?? '');
+    return s.includes(';') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g,'""')}"` : s;
+  }
+  function formatarData(v) {
+    if (!v) return '—';
+    const [a,m,d] = v.split('-');
+    return `${d}/${m}/${a}`;
+  }
+  function formatarDataHora(v) {
+    if (!v) return '—';
+    const d = new Date(v);
+    return `${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })}`;
+  }
+
+  verificarSessao();
+
+  setInterval(() => {
+    if (!obterToken()) redirecionarLogin();
+  }, 60_000);
+</script>
 </body>
 </html>

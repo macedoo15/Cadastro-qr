@@ -3,103 +3,243 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login — Painel Admin</title>
+  <title>Acesso Administrativo | Bem Brasil</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
-  <link rel="stylesheet" href="admin.css" />
+  <style>
+    :root {
+      --bg: #0d5a22; --surface: rgba(21, 94, 38, 0.92);
+      --text: #f7f1d7; --muted: #bbd09b;
+      --line: rgba(201, 160, 54, 0.26);
+      --accent: #d8ac32; --accent-2: #f1cf63; --accent-3: #8a6515;
+      --danger: #ff806f;
+      --shadow: 0 24px 60px rgba(3, 30, 8, 0.36);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif; color: var(--text);
+      background:
+        radial-gradient(circle at top center, rgba(212, 171, 54, 0.15), transparent 18%),
+        linear-gradient(180deg, #0a4d1c 0%, var(--bg) 36%, #084017 100%);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem 1rem;
+    }
+    .wrap { max-width: 400px; width: 100%; }
+
+    .logo-area { text-align: center; margin-bottom: 1.75rem; }
+    .brand-mark { width: 72px; height: 72px; margin: 0 auto 0.8rem; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .brand-mark img { width: 100%; height: 100%; object-fit: contain; }
+    .brand-mark span { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 700; color: var(--accent); }
+    .brand-kicker { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.3rem; }
+    .page-title { font-size: 1.6rem; font-family: 'Playfair Display', serif; font-weight: 700; color: var(--text); }
+    .page-sub { font-size: 0.9rem; color: var(--muted); margin-top: 0.25rem; }
+
+    .card { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid var(--line); border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow); animation: fadeUp 0.7s ease both; }
+
+    .field { margin-bottom: 1.1rem; }
+    .field:last-of-type { margin-bottom: 0; }
+    .field label { display: flex; align-items: center; gap: 0.4rem; font-size: 0.76rem; color: var(--accent); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .field input { width: 100%; padding: 0 14px; height: 44px; font-size: 1rem; background: #373132; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; color: #f5efe0; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+    .field input:focus { border-color: rgba(216,172,50,0.65); box-shadow: 0 0 0 3px rgba(216,172,50,0.14); }
+    .field input.error { border-color: var(--danger) !important; }
+
+    .btn-login {
+      width: 100%; height: 48px;
+      background: transparent; color: #fff;
+      border: 1px solid var(--accent); border-radius: 8px;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 0.55rem;
+      margin-top: 1.25rem;
+      transition: filter 0.2s, transform 0.15s, opacity 0.2s;
+    }
+    .btn-login:hover { filter: brightness(1.08); transform: translateY(-1px); background: rgba(216,172,50,0.08); }
+    .btn-login:active { transform: translateY(0) scale(0.99); }
+    .btn-login:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .alert-erro { background: rgba(255,140,120,0.1); border: 1px solid rgba(255,140,120,0.2); border-radius: 10px; padding: 10px 14px; font-size: 0.84rem; color: #ffd8d3; margin-top: 1rem; display: none; align-items: center; gap: 8px; }
+    .alert-erro i { flex-shrink: 0; }
+
+    /* Tentativas bloqueadas */
+    .lock-banner { background: rgba(255,128,111,0.12); border: 1px solid rgba(255,128,111,0.28); border-radius: 10px; padding: 10px 14px; font-size: 0.84rem; color: #ffd8d3; margin-top: 1rem; display: none; align-items: center; gap: 8px; }
+    .lock-banner.visible { display: flex; }
+
+    .divider { border: none; border-top: 1px solid var(--line); margin: 1.25rem 0; }
+
+    .back-link { display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.88rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+    .back-link:hover { color: var(--accent-2); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
 </head>
-<body class="login-page">
-
-  <div class="login-wrap">
-    <div class="login-card">
-
-      <div class="login-logo">
-        <div class="login-logo-circle">
-          <i class="ti ti-shield-lock"></i>
-        </div>
-        <h1 class="login-title">Painel Administrativo</h1>
-        <p class="login-subtitle">Acesso restrito ao proprietário</p>
-      </div>
-
-      <div class="field">
-        <label><i class="ti ti-mail"></i> E-mail</label>
-        <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email" />
-      </div>
-
-      <div class="field">
-        <label><i class="ti ti-lock"></i> Senha</label>
-        <div class="input-pw-wrap">
-          <input type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password" />
-          <button class="btn-toggle-pw" onclick="toggleSenha()" title="Mostrar senha">
-            <i class="ti ti-eye" id="pw-icon"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="alert-erro" id="login-erro" style="display:none;">
-        <i class="ti ti-alert-circle"></i>
-        <span id="login-erro-msg">E-mail ou senha incorretos.</span>
-      </div>
-
-      <button class="btn-primary" id="btn-login" onclick="fazerLogin()">
-        <i class="ti ti-login"></i> Entrar
-      </button>
-
+<body>
+<div class="wrap">
+  <div class="logo-area">
+    <div class="brand-mark">
+      <img src="logo.png" alt="Bem Brasil"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+      <span style="display:none;">BB</span>
     </div>
+    <p class="brand-kicker">Bem Brasil Restaurante</p>
+    <p class="page-title">Painel Administrativo</p>
+    <p class="page-sub">Acesso restrito a usuários autorizados.</p>
   </div>
 
-  <!-- SDK Supabase (apenas uma vez) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="auth.js"></script>
-  <script>
-    // Redireciona se já estiver logado
-    supabaseClient.auth.getSession().then(({ data }) => {
-      if (data.session) window.location.href = 'admin.html';
-    });
+  <div class="card">
+    <div class="field">
+      <label for="adm-email"><i class="ti ti-mail"></i> E-mail</label>
+      <input type="email" id="adm-email" placeholder="admin@bembrasil.com" autocomplete="username" />
+    </div>
+    <div class="field">
+      <label for="adm-senha"><i class="ti ti-lock"></i> Senha</label>
+      <input type="password" id="adm-senha" placeholder="••••••••" autocomplete="current-password" />
+    </div>
 
-    function toggleSenha() {
-      const inp = document.getElementById('login-senha');
-      const ico = document.getElementById('pw-icon');
-      if (inp.type === 'password') {
-        inp.type = 'text';
-        ico.className = 'ti ti-eye-off';
-      } else {
-        inp.type = 'password';
-        ico.className = 'ti ti-eye';
+    <div class="lock-banner" id="lock-banner">
+      <i class="ti ti-shield-lock"></i>
+      <span>Muitas tentativas. Aguarde <b id="lock-cd">30</b>s antes de tentar novamente.</span>
+    </div>
+
+    <div class="alert-erro" id="alert-login">
+      <i class="ti ti-alert-circle"></i>
+      <span id="alert-login-msg">Credenciais inválidas.</span>
+    </div>
+
+    <button class="btn-login" id="btn-login" onclick="fazerLogin()">
+      <i class="ti ti-login"></i> Entrar
+    </button>
+
+    <hr class="divider" />
+    <a href="index.html" class="back-link"><i class="ti ti-arrow-left"></i> Voltar ao cadastro</a>
+  </div>
+</div>
+
+<script>
+  /* ── Config — apenas anon key ───────────────────────── */
+  const SUPABASE_URL = 'https://vtbrvwagyhlbuuitwfpe.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0YnJ2d2FneWhsYnV1aXR3ZnBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NjA2ODgsImV4cCI6MjA5NjUzNjY4OH0.nUBMV8LcQHMCj45ZEFpGZHpV_5pWzCprWRe2X26Jbt0';
+
+  /* ── Rate limiting de login (5 tentativas / 30s) ────── */
+  const LOGIN_RATE = { max: 5, blockMs: 30_000 };
+  let loginAttempts = 0;
+  let loginBlockedUntil = 0;
+  let loginCdInterval = null;
+
+  function loginIsBlocked() { return Date.now() < loginBlockedUntil; }
+
+  function registrarFalhaLogin() {
+    loginAttempts++;
+    if (loginAttempts >= LOGIN_RATE.max) {
+      loginBlockedUntil = Date.now() + LOGIN_RATE.blockMs;
+      iniciarContagemLogin();
+      setTimeout(() => { loginAttempts = 0; loginBlockedUntil = 0; }, LOGIN_RATE.blockMs);
+    }
+  }
+
+  function iniciarContagemLogin() {
+    const banner = document.getElementById('lock-banner');
+    const cd     = document.getElementById('lock-cd');
+    banner.classList.add('visible');
+    document.getElementById('btn-login').disabled = true;
+    let secsLeft = Math.ceil(LOGIN_RATE.blockMs / 1000);
+    cd.textContent = secsLeft;
+    clearInterval(loginCdInterval);
+    loginCdInterval = setInterval(() => {
+      secsLeft--;
+      cd.textContent = secsLeft;
+      if (secsLeft <= 0) {
+        clearInterval(loginCdInterval);
+        banner.classList.remove('visible');
+        document.getElementById('btn-login').disabled = false;
       }
+    }, 1000);
+  }
+
+  /* ── Verificar sessão existente (auto-redirect) ─────── */
+  async function verificarSessao() {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${obterToken()}` }
+      });
+      if (res.ok) {
+        window.location.replace('admin.html');
+      }
+    } catch (_) { /* sem sessão — continua na tela de login */ }
+  }
+
+  function obterToken() {
+    try {
+      const raw = localStorage.getItem(`sb-${SUPABASE_URL.split('//')[1].split('.')[0]}-auth-token`);
+      if (!raw) return '';
+      return JSON.parse(raw)?.access_token ?? '';
+    } catch (_) { return ''; }
+  }
+
+  /* ── Login via Supabase Auth ────────────────────────── */
+  async function fazerLogin() {
+    const alerta = document.getElementById('alert-login');
+    alerta.style.display = 'none';
+
+    if (loginIsBlocked()) return;
+
+    const email = document.getElementById('adm-email').value.trim().toLowerCase();
+    const senha = document.getElementById('adm-senha').value;
+
+    if (!email || !senha) {
+      alerta.style.display = 'flex';
+      document.getElementById('alert-login-msg').textContent = 'Preencha e-mail e senha.';
+      return;
     }
 
-    document.getElementById('login-senha').addEventListener('keydown', e => {
-      if (e.key === 'Enter') fazerLogin();
-    });
+    const btn = document.getElementById('btn-login');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-loader-2"></i> Verificando...';
 
-    async function fazerLogin() {
-      const email = document.getElementById('login-email').value.trim();
-      const senha = document.getElementById('login-senha').value;
-      const erro  = document.getElementById('login-erro');
-      const btn   = document.getElementById('btn-login');
+    try {
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
+        body: JSON.stringify({ email, password: senha })
+      });
 
-      erro.style.display = 'none';
+      const data = await res.json();
 
-      if (!email || !senha) {
-        document.getElementById('login-erro-msg').textContent = 'Preencha e-mail e senha.';
-        erro.style.display = 'flex';
-        return;
+      if (!res.ok || !data.access_token) {
+        registrarFalhaLogin();
+        throw new Error('E-mail ou senha incorretos. Verifique as credenciais.');
       }
 
-      btn.disabled = true;
-      btn.innerHTML = '<i class="ti ti-loader-2 spin"></i> Entrando...';
+      // Salva o token de sessão de forma segura
+      const tokenKey = `sb-${SUPABASE_URL.split('//')[1].split('.')[0]}-auth-token`;
+      localStorage.setItem(tokenKey, JSON.stringify({
+        access_token:  data.access_token,
+        refresh_token: data.refresh_token,
+        expires_at:    Math.floor(Date.now() / 1000) + data.expires_in
+      }));
 
-      const { error } = await supabaseClient.auth.signInWithPassword({ email, password: senha });
+      // Redireciona para o painel (sem histórico — evita voltar com botão)
+      window.location.replace('admin.html');
 
-      if (error) {
-        document.getElementById('login-erro-msg').textContent = 'E-mail ou senha incorretos.';
-        erro.style.display = 'flex';
-        btn.disabled = false;
-        btn.innerHTML = '<i class="ti ti-login"></i> Entrar';
-      } else {
-        window.location.href = 'admin.html';
-      }
+    } catch (err) {
+      alerta.style.display = 'flex';
+      document.getElementById('alert-login-msg').textContent = err.message;
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-login"></i> Entrar';
     }
-  </script>
+  }
+
+  /* ── Enter no campo de senha ─────────────────────────── */
+  document.getElementById('adm-senha').addEventListener('keydown', e => {
+    if (e.key === 'Enter') fazerLogin();
+  });
+
+  /* ── Verificar sessão ao carregar ───────────────────── */
+  verificarSessao();
+</script>
 </body>
 </html>

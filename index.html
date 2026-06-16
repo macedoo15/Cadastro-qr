@@ -11,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <!-- Cloudflare Turnstile -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
   <style>
     :root {
       --bg: #0d5a22;
@@ -29,7 +31,6 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -57,18 +58,8 @@
       pointer-events: none;
       opacity: 0.55;
     }
-
-    body::before {
-      width: 360px; height: 360px;
-      right: -140px; top: -80px;
-      background: rgba(212, 171, 54, 0.08);
-    }
-
-    body::after {
-      width: 260px; height: 260px;
-      left: -120px; bottom: -60px;
-      background: rgba(255, 255, 255, 0.04);
-    }
+    body::before { width: 360px; height: 360px; right: -140px; top: -80px; background: rgba(212, 171, 54, 0.08); }
+    body::after  { width: 260px; height: 260px; left: -120px; bottom: -60px; background: rgba(255, 255, 255, 0.04); }
 
     .wrap {
       max-width: 560px;
@@ -90,78 +81,23 @@
 
     .brand-mark {
       width: 88px; height: 88px;
-      border-radius: 0;
       margin: 0 auto 0.8rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       color: var(--accent);
       background: transparent;
-      box-shadow: none;
       border: none;
-      position: relative;
       overflow: hidden;
     }
+    .brand-mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .brand-mark span { font-family: 'Playfair Display', serif; font-size: 2.15rem; font-weight: 700; transform: translateY(1px); }
 
-    .brand-mark img {
-      width: 100%; height: 100%;
-      object-fit: contain;
-      display: block;
-      padding: 0;
-    }
+    .brand-kicker { font-size: 0.88rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.65rem; }
+    .form-title { font-size: clamp(1.7rem, 4vw, 2.2rem); font-family: 'Playfair Display', serif; font-weight: 700; letter-spacing: -0.03em; color: var(--text); }
+    .form-subtitle { font-size: 1rem; color: #d6e7c6; margin-top: 0.35rem; line-height: 1.5; }
 
-    .brand-mark span {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.15rem;
-      font-weight: 700;
-      transform: translateY(1px);
-    }
-
-    .brand-kicker {
-      font-size: 0.88rem;
-      font-weight: 700;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.65rem;
-    }
-
-    .form-title {
-      font-size: clamp(1.7rem, 4vw, 2.2rem);
-      font-family: 'Playfair Display', serif;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      color: var(--text);
-    }
-
-    .form-subtitle {
-      font-size: 1rem;
-      color: #d6e7c6;
-      margin-top: 0.35rem;
-      line-height: 1.5;
-    }
-
-    .progress {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin: 0 0 1.1rem;
-      animation: fadeUp 0.8s ease both;
-      animation-delay: 0.08s;
-    }
-
-    .progress-dot {
-      width: 160px; height: 8px;
-      border-radius: 999px;
-      background: rgba(216, 172, 50, 0.22);
-      transition: all 0.25s ease;
-    }
-
-    .progress-dot.active {
-      width: 160px;
-      background: linear-gradient(90deg, var(--accent-3) 0%, var(--accent) 55%, var(--accent-2) 100%);
-      box-shadow: 0 8px 18px rgba(216, 172, 50, 0.24);
-    }
+    .progress { display: flex; gap: 8px; justify-content: center; margin: 0 0 1.1rem; animation: fadeUp 0.8s ease both; animation-delay: 0.08s; }
+    .progress-dot { width: 160px; height: 8px; border-radius: 999px; background: rgba(216, 172, 50, 0.22); transition: all 0.25s ease; }
+    .progress-dot.active { background: linear-gradient(90deg, var(--accent-3) 0%, var(--accent) 55%, var(--accent-2) 100%); box-shadow: 0 8px 18px rgba(216, 172, 50, 0.24); }
 
     .card {
       background: var(--surface);
@@ -173,237 +109,127 @@
       box-shadow: var(--shadow);
       animation: fadeUp 0.85s ease both;
     }
-
     .card:nth-of-type(2) { animation-delay: 0.08s; }
 
     .field { margin-bottom: 1rem; }
     .field:last-child { margin-bottom: 0; }
 
     .field label {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-size: 0.76rem;
-      color: var(--accent);
-      margin-bottom: 0.55rem;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
+      display: flex; align-items: center; gap: 0.45rem;
+      font-size: 0.76rem; color: var(--accent);
+      margin-bottom: 0.55rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
     }
-
     .field label i { font-size: 1rem; color: var(--accent); }
 
     .field input {
-      width: 100%;
-      padding: 0 14px;
-      height: 42px;
-      font-size: 1rem;
-      background: #373132;
+      width: 100%; padding: 0 14px; height: 42px;
+      font-size: 1rem; background: #373132;
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 6px;
-      color: #f5efe0;
+      border-radius: 6px; color: #f5efe0;
       transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s, background 0.2s;
       outline: none;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
+    .field input:focus { border-color: rgba(216, 172, 50, 0.65); box-shadow: 0 0 0 3px rgba(216, 172, 50, 0.14); background: #3d3738; transform: translateY(-1px); }
+    .field input.error  { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(255, 128, 111, 0.15) !important; }
+    .field input.valid  { border-color: rgba(100, 210, 120, 0.55); box-shadow: 0 0 0 3px rgba(100, 210, 120, 0.10); }
 
-    .field input:focus {
-      border-color: rgba(216, 172, 50, 0.65);
-      box-shadow: 0 0 0 3px rgba(216, 172, 50, 0.14);
-      background: #3d3738;
-      transform: translateY(-1px);
-    }
-
-    .field input.error {
-      border-color: var(--danger) !important;
-      box-shadow: 0 0 0 3px rgba(255, 128, 111, 0.15) !important;
-    }
-
-    .field input.valid {
-      border-color: rgba(100, 210, 120, 0.55);
-      box-shadow: 0 0 0 3px rgba(100, 210, 120, 0.10);
-    }
-
-    .err-msg {
-      font-size: 0.78rem;
-      color: #ff9a8f;
-      margin-top: 0.38rem;
-      display: none;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    .err-msg.visible {
-      display: flex;
-    }
+    .err-msg { font-size: 0.78rem; color: #ff9a8f; margin-top: 0.38rem; display: none; align-items: center; gap: 0.3rem; }
+    .err-msg.visible { display: flex; }
 
     .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-    .privacy-note {
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-align: center;
-      margin-top: 0.6rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      width: 100%;
-    }
-
+    .privacy-note { font-size: 0.8rem; color: var(--muted); text-align: center; margin-top: 0.6rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; width: 100%; }
     .privacy-note i { font-size: 0.9rem; vertical-align: -2px; color: var(--accent); }
 
-    .btn-submit {
-      width: 100%;
-      height: 48px;
-      background: transparent;
-      color: #fff;
-      border: 1px solid var(--accent);
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
+    /* Turnstile container */
+    #turnstile-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+      min-height: 0px; /* invisível — sem espaço extra */
+    }
+
+    /* Badge de status do captcha */
+    .captcha-status {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.55rem;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      margin-top: 0.5rem;
+      min-height: 20px;
+      transition: opacity 0.3s;
+    }
+    .captcha-status.verificando { color: var(--muted); }
+    .captcha-status.ok  { color: #80d4a0; }
+    .captcha-status.err { color: var(--danger); }
+
+    .btn-submit {
+      width: 100%; height: 48px;
+      background: transparent; color: #fff;
+      border: 1px solid var(--accent); border-radius: 8px;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 0.55rem;
       transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
       margin-top: 1.15rem;
-      box-shadow: none;
     }
-
-    .btn-submit:not(:disabled):hover {
-      filter: brightness(1.06);
-      transform: translateY(-1px);
-      background: rgba(216, 172, 50, 0.08);
-    }
-
+    .btn-submit:not(:disabled):hover { filter: brightness(1.06); transform: translateY(-1px); background: rgba(216, 172, 50, 0.08); }
     .btn-submit:not(:disabled):active { transform: translateY(0) scale(0.99); }
+    .btn-submit:disabled { opacity: 0.45; cursor: not-allowed; filter: none; transform: none; }
 
-    .btn-submit:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      box-shadow: none;
-      filter: none;
-      transform: none;
+    .rate-banner {
+      background: rgba(255, 128, 111, 0.12);
+      border: 1px solid rgba(255, 128, 111, 0.28);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.84rem;
+      color: #ffd8d3;
+      margin-top: 1rem;
+      display: none;
+      align-items: center;
+      gap: 8px;
     }
+    .rate-banner.visible { display: flex; }
+    .rate-banner i { flex-shrink: 0; }
 
     .alert-erro {
       background: rgba(255, 140, 120, 0.1);
       border: 1px solid rgba(255, 140, 120, 0.2);
       border-radius: 12px;
       padding: 12px 14px;
-      font-size: 0.86rem;
-      color: #ffd8d3;
+      font-size: 0.86rem; color: #ffd8d3;
       margin-top: 1rem;
-      align-items: center;
-      gap: 8px;
+      align-items: center; gap: 8px;
       display: none;
     }
-
     .alert-erro i { font-size: 1rem; flex-shrink: 0; }
 
     .success-wrap {
-      text-align: center;
-      padding: 3.5rem 1.25rem;
+      text-align: center; padding: 3.5rem 1.25rem;
       display: none;
       background: rgba(15, 100, 34, 0.92);
       backdrop-filter: blur(12px);
-      border: 1px solid var(--line);
-      border-radius: 20px;
+      border: 1px solid var(--line); border-radius: 20px;
       box-shadow: var(--shadow);
       animation: fadeUp 0.8s ease both;
     }
-
-    .success-circle {
-      width: 82px; height: 82px;
-      border-radius: 50%;
-      background: rgba(216, 172, 50, 0.16);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-    }
-
+    .success-circle { width: 82px; height: 82px; border-radius: 50%; background: rgba(216, 172, 50, 0.16); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
     .success-circle i { font-size: 38px; color: var(--accent-2); }
+    .success-title { font-size: clamp(1.6rem, 4vw, 2rem); font-family: 'Playfair Display', serif; font-weight: 700; color: var(--text); margin-bottom: 0.55rem; letter-spacing: -0.03em; }
+    .success-sub { font-size: 1rem; color: #d2e0bf; line-height: 1.7; }
 
-    .success-title {
-      font-size: clamp(1.6rem, 4vw, 2rem);
-      font-family: 'Playfair Display', serif;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 0.55rem;
-      letter-spacing: -0.03em;
-    }
-
-    .success-sub {
-      font-size: 1rem;
-      color: #d2e0bf;
-      line-height: 1.7;
-    }
-
-    .footer-social {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.8rem;
-      margin: 1rem 0 0.25rem;
-      padding: 0.9rem 0 0;
-      border-top: 1px solid rgba(216, 172, 50, 0.24);
-      color: #d9e8c8;
-      flex-wrap: wrap;
-    }
-
+    .footer-social { display: flex; align-items: center; justify-content: center; gap: 0.8rem; margin: 1rem 0 0.25rem; padding: 0.9rem 0 0; border-top: 1px solid rgba(216, 172, 50, 0.24); color: #d9e8c8; flex-wrap: wrap; }
     .footer-social a { color: inherit; text-decoration: none; }
-
-    .footer-social .admin-access {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(216, 172, 50, 0.24);
-      color: var(--accent-2);
-      transition: transform 0.15s ease, background 0.15s ease;
-    }
-
-    .footer-social .admin-access:hover {
-      transform: translateY(-1px);
-      background: rgba(216, 172, 50, 0.16);
-    }
-
-    .footer-social .social-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-    }
-
-    .footer-social .social-icon {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(216, 172, 50, 0.14);
-      border: 1px solid rgba(216, 172, 50, 0.32);
-      transition: transform 0.15s ease, background 0.15s ease;
-    }
-
+    .footer-social .admin-access { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(216, 172, 50, 0.24); color: var(--accent-2); transition: transform 0.15s ease, background 0.15s ease; }
+    .footer-social .admin-access:hover { transform: translateY(-1px); background: rgba(216, 172, 50, 0.16); }
+    .footer-social .social-link { display: inline-flex; align-items: center; gap: 0.55rem; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.01em; }
+    .footer-social .social-icon { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: rgba(216, 172, 50, 0.14); border: 1px solid rgba(216, 172, 50, 0.32); transition: transform 0.15s ease, background 0.15s ease; }
     .footer-social .social-icon i { font-size: 1.05rem; color: var(--accent-2); }
+    .footer-social a:hover .social-icon { transform: translateY(-1px); background: rgba(216, 172, 50, 0.22); }
 
-    .footer-social a:hover .social-icon {
-      transform: translateY(-1px);
-      background: rgba(216, 172, 50, 0.22);
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 
     @media (max-width: 540px) {
       body { padding: 0.8rem 0.7rem 1rem; align-items: stretch; }
@@ -415,7 +241,6 @@
       .form-subtitle { font-size: 0.9rem; padding: 0 0.2rem; }
       .progress { margin-bottom: 0.95rem; }
       .progress-dot { width: 88px; height: 7px; }
-      .progress-dot.active { width: 88px; }
       .card { padding: 1rem; border-radius: 16px; box-shadow: 0 12px 26px rgba(3, 30, 8, 0.26); }
       .field { margin-bottom: 0.9rem; }
       .field input { height: 44px; font-size: 0.96rem; }
@@ -488,6 +313,17 @@
       Seus dados estão protegidos e não serão compartilhados.
     </p>
 
+    <!-- Turnstile invisível -->
+    <div id="turnstile-wrap"></div>
+    <div class="captcha-status verificando" id="captcha-status">
+      <i class="ti ti-shield"></i> <span id="captcha-msg">Verificando segurança...</span>
+    </div>
+
+    <div class="rate-banner" id="rate-banner">
+      <i class="ti ti-clock"></i>
+      <span id="rate-msg">Aguarde <b id="rate-countdown">30</b>s antes de tentar novamente.</span>
+    </div>
+
     <div class="alert-erro" id="alert-erro">
       <i class="ti ti-alert-circle"></i>
       <span id="alert-erro-msg">Erro ao salvar. Tente novamente.</span>
@@ -517,14 +353,96 @@
 </div>
 
 <script>
-  /* ─── CONFIG ─────────────────────────────────────────── */
-  const SUPABASE_URL = 'https://vtbrvwagyhlbuuitwfpe.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_Po5meq60q7XSVWBtBMw4Jw_l4YXF3lV';
+  /* ── Config ── */
+  const SUPABASE_URL  = 'https://vtbrvwagyhlbuuitwfpe.supabase.co';
+  const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0YnJ2d2FneWhsYnV1aXR3ZnBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NjA2ODgsImV4cCI6MjA5NjUzNjY4OH0.nUBMV8LcQHMCj45ZEFpGZHpV_5pWzCprWRe2X26Jbt0';
+  const TURNSTILE_KEY = '0x4AAAAAADlf9vRTQc1wPg0l';
 
-  /* ─── ESTADO DE VALIDAÇÃO ─────────────────────────────── */
+  /* ── Estado do Turnstile ── */
+  let turnstileToken  = '';
+  let turnstileWidget = null;
+
+  /* ── Inicializa Turnstile após o script da CF carregar ── */
+  window.onloadTurnstileCallback = function () {
+    turnstileWidget = turnstile.render('#turnstile-wrap', {
+      sitekey:  TURNSTILE_KEY,
+      theme:    'dark',
+      size:     'invisible',
+      callback: function (token) {
+        turnstileToken = token;
+        setCaptchaStatus('ok', 'Verificação concluída');
+        atualizarBotao();
+      },
+      'error-callback': function () {
+        turnstileToken = '';
+        setCaptchaStatus('err', 'Falha na verificação. Recarregue a página.');
+        atualizarBotao();
+      },
+      'expired-callback': function () {
+        turnstileToken = '';
+        setCaptchaStatus('verificando', 'Verificação expirada. Aguarde...');
+        atualizarBotao();
+        // Renova automaticamente
+        turnstile.reset(turnstileWidget);
+      }
+    });
+  };
+
+  // Registra o callback no script do Turnstile
+  document.querySelector('script[src*="turnstile"]').setAttribute(
+    'src',
+    'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit'
+  );
+
+  function setCaptchaStatus(tipo, msg) {
+    const el = document.getElementById('captcha-status');
+    const tx = document.getElementById('captcha-msg');
+    el.className = 'captcha-status ' + tipo;
+    tx.textContent = msg;
+    const icon = el.querySelector('i');
+    if (tipo === 'ok')           icon.className = 'ti ti-shield-check';
+    else if (tipo === 'err')     icon.className = 'ti ti-shield-x';
+    else                         icon.className = 'ti ti-shield';
+  }
+
+  /* ── Rate limiting ── */
+  const RATE = { max: 3, windowMs: 60_000, blockMs: 30_000 };
+  let attempts = 0, blockedUntil = 0, rateCdInterval = null;
+
+  function isBlocked() { return Date.now() < blockedUntil; }
+
+  function registrarTentativa() {
+    attempts++;
+    if (attempts >= RATE.max) {
+      blockedUntil = Date.now() + RATE.blockMs;
+      iniciarContagem();
+      setTimeout(() => { attempts = 0; blockedUntil = 0; }, RATE.blockMs);
+    }
+  }
+
+  function iniciarContagem() {
+    const banner = document.getElementById('rate-banner');
+    const cd     = document.getElementById('rate-countdown');
+    banner.classList.add('visible');
+    document.getElementById('btn').disabled = true;
+    let secsLeft = Math.ceil(RATE.blockMs / 1000);
+    cd.textContent = secsLeft;
+    clearInterval(rateCdInterval);
+    rateCdInterval = setInterval(() => {
+      secsLeft--;
+      cd.textContent = secsLeft;
+      if (secsLeft <= 0) {
+        clearInterval(rateCdInterval);
+        banner.classList.remove('visible');
+        atualizarBotao();
+      }
+    }, 1000);
+  }
+
+  /* ── Estado de validação ── */
   const fieldState = { nome: false, email: false, nasc: false, tel: false };
 
-  /* ─── MÁSCARA DE TELEFONE ─────────────────────────────── */
+  /* ── Máscara de telefone ── */
   document.getElementById('tel').addEventListener('input', function () {
     let v = this.value.replace(/\D/g, '').slice(0, 11);
     if (v.length <= 10) {
@@ -538,89 +456,37 @@
     validateField('tel');
   });
 
-  /* ─── VALIDADORES ─────────────────────────────────────── */
-
-  /**
-   * Nome completo:
-   * - Mínimo 2 palavras, cada uma com ≥ 2 letras
-   * - Apenas letras (incluindo acentuação) e espaços
-   */
+  /* ── Validadores ── */
   function validarNome(v) {
     v = v.trim();
     if (!v) return false;
-    // Só letras e espaços (sem dígitos, símbolos)
     if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(v)) return false;
-    const palavras = v.split(/\s+/).filter(p => p.length >= 2);
-    return palavras.length >= 2;
+    return v.split(/\s+/).filter(p => p.length >= 2).length >= 2;
   }
 
-  /**
-   * E-mail:
-   * Regex estrita: local@domínio.tld (tld mínimo 2 chars)
-   * Bloqueia: teste@, @gmail.com, teste@gmail, teste@.com, teste@@gmail.com
-   */
   function validarEmail(v) {
     v = v.trim();
-    // Regex estrita – nenhum ponto duplo, arroba duplo, ponto antes do @, etc.
-    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(v)
-      && !v.includes('..')        // sem pontos duplos
-      && !v.startsWith('.')       // não começa com ponto
-      && !/\.@/.test(v)           // sem ponto imediatamente antes do @
-      && !/^[^@]*@\./.test(v);    // sem ponto imediatamente após o @
+    if (!v) return false;
+    if (v.includes('..') || v.startsWith('.') || /\.@/.test(v) || /^[^@]*@\./.test(v)) return false;
+    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(v);
   }
 
-  /**
-   * Data de nascimento:
-   * - Deve ser uma data real (mês/dia válidos para o ano)
-   * - Não pode ser futura
-   * - Idade entre 0 e 120 anos
-   */
   function validarNasc(v) {
     if (!v) return false;
-
-    // Parse sem fuso-horário (yyyy-mm-dd)
     const [ano, mes, dia] = v.split('-').map(Number);
     if (!ano || !mes || !dia) return false;
-
-    // Verificar se a data realmente existe
     const d = new Date(ano, mes - 1, dia);
-    if (
-      d.getFullYear() !== ano ||
-      d.getMonth() !== mes - 1 ||
-      d.getDate() !== dia
-    ) return false;
-
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-
-    // Não pode ser futura nem igual a hoje (recém-nascido = ok; data futura = não)
+    if (d.getFullYear() !== ano || d.getMonth() !== mes - 1 || d.getDate() !== dia) return false;
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
     if (d > hoje) return false;
-
-    // Idade máxima de 120 anos
-    const limiteMin = new Date(hoje);
-    limiteMin.setFullYear(limiteMin.getFullYear() - 120);
-    if (d < limiteMin) return false;
-
-    return true;
+    const limiteMin = new Date(hoje); limiteMin.setFullYear(limiteMin.getFullYear() - 120);
+    return d >= limiteMin;
   }
 
-  /**
-   * Telefone brasileiro:
-   * - 10 dígitos (fixo): DDD + 8 dígitos
-   * - 11 dígitos (celular): DDD + 9 (iniciando em 9) + 8 dígitos
-   * - DDD válido (11–99, exceto alguns reservados)
-   * - Bloqueia sequências repetidas (1111…, 0000…) e crescentes (12345…)
-   */
   function validarTel(v) {
-    const digits = v.replace(/\D/g, '');
-
-    if (digits.length !== 10 && digits.length !== 11) return false;
-
-    // DDD: primeiro par de dígitos, deve estar entre 11 e 99
-    const ddd = parseInt(digits.slice(0, 2), 10);
-    if (ddd < 11 || ddd > 99) return false;
-
-    // DDDs brasileiros válidos (lista oficial Anatel)
+    const d = v.replace(/\D/g, '');
+    if (d.length !== 10 && d.length !== 11) return false;
+    const ddd = parseInt(d.slice(0, 2), 10);
     const dddsValidos = [
       11,12,13,14,15,16,17,18,19,
       21,22,24,27,28,
@@ -633,39 +499,51 @@
       91,92,93,94,95,96,97,98,99
     ];
     if (!dddsValidos.includes(ddd)) return false;
-
-    const numero = digits.slice(2);
-
-    // Celular: deve começar com 9 e ter 9 dígitos
-    if (digits.length === 11 && numero[0] !== '9') return false;
-
-    // Bloquear sequências repetidas (ex: 11111111111, 00000000000)
-    if (/^(\d)\1+$/.test(digits)) return false;
-
-    // Bloquear sequências óbvias conhecidas
-    const invalidos = ['1234567890','0123456789','9876543210'];
-    if (invalidos.some(s => digits.includes(s.slice(0, digits.length)))) {
-      // Apenas bloquear se o número inteiro é uma sequência
-      if (/^(\d)\1*$/.test(numero) || numero === '12345678' || numero === '987654321') return false;
-    }
-
+    const num = d.slice(2);
+    if (d.length === 11 && num[0] !== '9') return false;
+    if (/^(\d)\1+$/.test(d)) return false;
+    if (/^(\d)\1+$/.test(num)) return false;
+    if (num === '12345678' || num === '987654321') return false;
     return true;
   }
 
-  /* ─── LÓGICA DE UI ────────────────────────────────────── */
+  function normEmail(v) { return v.trim().toLowerCase(); }
+  function normTel(v)   { return v.replace(/\D/g, ''); }
 
+  /* ── Duplicidade ── */
+  async function verificarDuplicidade(email, tel) {
+    const emailNorm = normEmail(email);
+    const telNorm   = normTel(tel);
+
+    const resEmail = await fetch(
+      `${SUPABASE_URL}/rest/v1/cadastros?email=eq.${encodeURIComponent(emailNorm)}&select=id&limit=1`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const dataEmail = await resEmail.json().catch(() => []);
+    if (Array.isArray(dataEmail) && dataEmail.length > 0)
+      return 'Este usuário já possui um cadastro em nosso sistema.';
+
+    const resTel = await fetch(
+      `${SUPABASE_URL}/rest/v1/cadastros?telefone_normalizado=eq.${encodeURIComponent(telNorm)}&select=id&limit=1`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const dataTel = await resTel.json().catch(() => []);
+    if (Array.isArray(dataTel) && dataTel.length > 0)
+      return 'Este usuário já possui um cadastro em nosso sistema.';
+
+    return null;
+  }
+
+  /* ── UI helpers ── */
   function setFieldError(id, isError) {
     const inp = document.getElementById(id);
     const msg = document.getElementById('e-' + id);
     if (!inp || !msg) return;
-
     if (isError) {
-      inp.classList.add('error');
-      inp.classList.remove('valid');
+      inp.classList.add('error'); inp.classList.remove('valid');
       msg.classList.add('visible');
     } else {
-      inp.classList.remove('error');
-      inp.classList.add('valid');
+      inp.classList.remove('error'); inp.classList.add('valid');
       msg.classList.remove('visible');
     }
   }
@@ -682,10 +560,7 @@
     const inp = document.getElementById(id);
     if (!inp) return;
     const v = inp.value;
-
-    // Não mostrar erro em campos ainda não tocados (vazios ao iniciar)
     const isEmpty = v.trim() === '' || v === '';
-
     let isValid = false;
     switch (id) {
       case 'nome':  isValid = validarNome(v);  break;
@@ -693,15 +568,9 @@
       case 'nasc':  isValid = validarNasc(v);  break;
       case 'tel':   isValid = validarTel(v);   break;
     }
-
     fieldState[id] = isValid;
-
-    if (isEmpty && !inp.dataset.touched) {
-      clearField(id);
-    } else {
-      setFieldError(id, !isValid);
-    }
-
+    if (isEmpty && !inp.dataset.touched) clearField(id);
+    else setFieldError(id, !isValid);
     atualizarBotao();
   }
 
@@ -711,89 +580,102 @@
   }
 
   function atualizarBotao() {
-    const tudo = Object.values(fieldState).every(Boolean);
-    document.getElementById('btn').disabled = !tudo;
+    const camposOk  = Object.values(fieldState).every(Boolean);
+    const captchaOk = !!turnstileToken;
+    document.getElementById('btn').disabled = !camposOk || !captchaOk || isBlocked();
   }
 
-  /* ─── OUVINTES DE EVENTOS ─────────────────────────────── */
   ['nome', 'email', 'nasc', 'tel'].forEach(id => {
     const inp = document.getElementById(id);
     if (!inp) return;
-
-    // Validação em tempo real ao digitar
-    inp.addEventListener('input', () => {
-      marcarTocado(id);
-      validateField(id);
-    });
-
-    // Validação ao sair do campo (garante estado correto)
-    inp.addEventListener('blur', () => {
-      marcarTocado(id);
-      validateField(id);
-    });
+    inp.addEventListener('input', () => { marcarTocado(id); validateField(id); });
+    inp.addEventListener('blur',  () => { marcarTocado(id); validateField(id); });
   });
 
-  /* ─── VALIDAÇÃO NO FRONTEND (antes do envio) ──────────── */
-  function validarTudo() {
-    ['nome', 'email', 'nasc', 'tel'].forEach(id => {
-      marcarTocado(id);
-      validateField(id);
-    });
-    return Object.values(fieldState).every(Boolean);
-  }
-
-  /* ─── VALIDAÇÃO NO "BACKEND" (antes de chamar Supabase) ── */
+  /* ── Validação do payload ── */
   function validarPayload(dados) {
     const erros = [];
-
-    if (!validarNome(dados.nome))
-      erros.push('Nome inválido: informe nome e sobrenome, apenas letras.');
-
-    if (!validarEmail(dados.email))
-      erros.push('E-mail inválido: verifique o formato digitado.');
-
-    if (!validarNasc(dados.data_nascimento))
-      erros.push('Data de nascimento inválida.');
-
-    // telefone já sem máscara
-    const telLimpo = dados.telefone.replace(/\D/g, '');
-    if (!validarTel(dados.telefone))
-      erros.push('Telefone inválido: use um número brasileiro válido.');
-
+    if (!validarNome(dados.nome))            erros.push('Nome inválido.');
+    if (!validarEmail(dados.email))          erros.push('E-mail inválido.');
+    if (!validarNasc(dados.data_nascimento)) erros.push('Data de nascimento inválida.');
+    if (!validarTel(dados.telefone))         erros.push('Telefone inválido.');
     return erros;
   }
 
-  /* ─── ENVIO ───────────────────────────────────────────── */
+  /* ── Audit log ── */
+  async function auditLog(evento, detalhe = {}) {
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/audit_log`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ evento, detalhe: JSON.stringify(detalhe), criado_em: new Date().toISOString() })
+      });
+    } catch (_) {}
+  }
+
+  /* ── Envio ── */
   async function enviar() {
     const alerta = document.getElementById('alert-erro');
     alerta.style.display = 'none';
 
-    // 1ª camada: validação no frontend
-    if (!validarTudo()) {
+    if (isBlocked()) return;
+
+    // Verifica token do Turnstile
+    if (!turnstileToken) {
       alerta.style.display = 'flex';
-      document.getElementById('alert-erro-msg').textContent =
-        'Corrija os campos destacados antes de continuar.';
+      document.getElementById('alert-erro-msg').textContent = 'Verificação de segurança pendente. Aguarde.';
       return;
     }
 
-    const nome  = document.getElementById('nome').value.trim();
-    const email = document.getElementById('email').value.trim().toLowerCase();
-    const nasc  = document.getElementById('nasc').value;
-    const tel   = document.getElementById('tel').value;
+    ['nome', 'email', 'nasc', 'tel'].forEach(id => { marcarTocado(id); validateField(id); });
+    if (!Object.values(fieldState).every(Boolean)) {
+      alerta.style.display = 'flex';
+      document.getElementById('alert-erro-msg').textContent = 'Corrija os campos destacados antes de continuar.';
+      await auditLog('VALIDACAO_FALHOU', { motivo: 'campos_invalidos' });
+      return;
+    }
 
-    // 2ª camada: validação do payload antes de tocar na API
+    const nome    = document.getElementById('nome').value.trim();
+    const email   = normEmail(document.getElementById('email').value);
+    const nasc    = document.getElementById('nasc').value;
+    const tel     = document.getElementById('tel').value;
+    const telNorm = normTel(tel);
+
     const errosPayload = validarPayload({ nome, email, data_nascimento: nasc, telefone: tel });
     if (errosPayload.length > 0) {
       alerta.style.display = 'flex';
       document.getElementById('alert-erro-msg').textContent = errosPayload[0];
+      await auditLog('VALIDACAO_FALHOU', { motivo: 'payload_invalido', erros: errosPayload });
       return;
     }
 
     const btn = document.getElementById('btn');
     btn.disabled = true;
-    btn.innerHTML = '<i class="ti ti-loader-2"></i> Salvando...';
+    btn.innerHTML = '<i class="ti ti-loader-2"></i> Verificando...';
 
     try {
+      const dupMsg = await verificarDuplicidade(email, tel);
+      if (dupMsg) {
+        alerta.style.display = 'flex';
+        document.getElementById('alert-erro-msg').textContent = dupMsg;
+        await auditLog('CADASTRO_DUPLICADO', { email, telNorm });
+        registrarTentativa();
+        // Renova o token do captcha após uso
+        turnstileToken = '';
+        turnstile.reset(turnstileWidget);
+        setCaptchaStatus('verificando', 'Renovando verificação...');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ti ti-check"></i> Confirmar cadastro';
+        return;
+      }
+
+      btn.innerHTML = '<i class="ti ti-loader-2"></i> Salvando...';
+
       const response = await fetch(`${SUPABASE_URL}/rest/v1/cadastros`, {
         method: 'POST',
         headers: {
@@ -806,30 +688,23 @@
           nome,
           email,
           data_nascimento: nasc,
-          telefone: tel
+          telefone: tel,
+          telefone_normalizado: telNorm
         })
       });
 
       if (!response.ok) {
         const erro = await response.json().catch(() => ({}));
-
         if (erro.code === '23505') {
-          throw new Error('Este e-mail já está cadastrado. Use outro e-mail ou entre em contato conosco.');
+          await auditLog('CADASTRO_DUPLICADO_BANCO', { email, telNorm });
+          throw new Error('Este usuário já possui um cadastro em nosso sistema.');
         }
-
-        // Erros de constraint do banco (check constraints configuradas no Supabase)
-        if (erro.code === '23514') {
-          throw new Error('Dados inválidos rejeitados pelo servidor. Verifique as informações e tente novamente.');
-        }
-
-        throw new Error(
-          erro.message
-            ? `Erro: ${erro.message}`
-            : 'Erro ao salvar. Verifique os dados e tente novamente.'
-        );
+        if (erro.code === '23514') throw new Error('Dados inválidos rejeitados pelo servidor.');
+        if (erro.code === '42501') throw new Error('Operação não autorizada. Tente novamente.');
+        throw new Error(erro.message ? `Erro ao salvar: ${erro.message}` : 'Erro ao salvar. Tente novamente.');
       }
 
-      // Sucesso confirmado pelo Supabase
+      await auditLog('CADASTRO_SUCESSO', { email, telNorm });
       ['d1', 'd2', 'd3'].forEach(id => document.getElementById(id).classList.add('active'));
       setTimeout(() => {
         document.getElementById('form-wrap').style.display = 'none';
@@ -839,8 +714,14 @@
     } catch (err) {
       document.getElementById('alert-erro-msg').textContent = err.message;
       alerta.style.display = 'flex';
+      registrarTentativa();
+      // Renova token após erro
+      turnstileToken = '';
+      turnstile.reset(turnstileWidget);
+      setCaptchaStatus('verificando', 'Renovando verificação...');
       btn.disabled = false;
       btn.innerHTML = '<i class="ti ti-check"></i> Confirmar cadastro';
+      await auditLog('ERRO_ENVIO', { mensagem: err.message });
     }
   }
 </script>
