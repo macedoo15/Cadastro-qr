@@ -12,19 +12,18 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <style>
     :root {
-      --bg: #0d5a22; --surface: rgba(21, 94, 38, 0.92);
+      --bg: #0d5a22; --surface: rgba(21,94,38,0.92);
       --text: #f7f1d7; --muted: #bbd09b;
-      --line: rgba(201, 160, 54, 0.26);
-      --accent: #d8ac32; --accent-2: #f1cf63; --accent-3: #8a6515;
+      --line: rgba(201,160,54,0.26);
+      --accent: #d8ac32; --accent-2: #f1cf63;
       --danger: #ff806f;
-      --shadow: 0 24px 60px rgba(3, 30, 8, 0.36);
+      --shadow: 0 24px 60px rgba(3,30,8,0.36);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'DM Sans', sans-serif; color: var(--text);
       background:
-        radial-gradient(circle at top center, rgba(212, 171, 54, 0.15), transparent 18%),
+        radial-gradient(circle at top center, rgba(212,171,54,0.15), transparent 18%),
         linear-gradient(180deg, #0a4d1c 0%, var(--bg) 36%, #084017 100%);
       min-height: 100vh;
       display: flex; align-items: center; justify-content: center;
@@ -47,34 +46,25 @@
     .field label { display: flex; align-items: center; gap: 0.4rem; font-size: 0.76rem; color: var(--accent); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.5rem; }
     .field input { width: 100%; padding: 0 14px; height: 44px; font-size: 1rem; background: #373132; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; color: #f5efe0; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
     .field input:focus { border-color: rgba(216,172,50,0.65); box-shadow: 0 0 0 3px rgba(216,172,50,0.14); }
-    .field input.error { border-color: var(--danger) !important; }
 
-    .btn-login {
-      width: 100%; height: 48px;
-      background: transparent; color: #fff;
-      border: 1px solid var(--accent); border-radius: 8px;
-      font-size: 1rem; font-weight: 700; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 0.55rem;
-      margin-top: 1.25rem;
-      transition: filter 0.2s, transform 0.15s, opacity 0.2s;
-    }
+    .btn-login { width: 100%; height: 48px; background: transparent; color: #fff; border: 1px solid var(--accent); border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.55rem; margin-top: 1.25rem; transition: filter 0.2s, transform 0.15s, opacity 0.2s; }
     .btn-login:hover { filter: brightness(1.08); transform: translateY(-1px); background: rgba(216,172,50,0.08); }
     .btn-login:active { transform: translateY(0) scale(0.99); }
-    .btn-login:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-login:disabled { opacity: 0.45; cursor: not-allowed; filter: none; transform: none; }
 
     .alert-erro { background: rgba(255,140,120,0.1); border: 1px solid rgba(255,140,120,0.2); border-radius: 10px; padding: 10px 14px; font-size: 0.84rem; color: #ffd8d3; margin-top: 1rem; display: none; align-items: center; gap: 8px; }
     .alert-erro i { flex-shrink: 0; }
 
-    /* Tentativas bloqueadas */
     .lock-banner { background: rgba(255,128,111,0.12); border: 1px solid rgba(255,128,111,0.28); border-radius: 10px; padding: 10px 14px; font-size: 0.84rem; color: #ffd8d3; margin-top: 1rem; display: none; align-items: center; gap: 8px; }
     .lock-banner.visible { display: flex; }
 
     .divider { border: none; border-top: 1px solid var(--line); margin: 1.25rem 0; }
-
     .back-link { display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.88rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
     .back-link:hover { color: var(--accent-2); }
 
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin 0.8s linear infinite; display: inline-block; }
   </style>
 </head>
 <body>
@@ -82,7 +72,7 @@
   <div class="logo-area">
     <div class="brand-mark">
       <img src="logo.png" alt="Bem Brasil"
-           onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
       <span style="display:none;">BB</span>
     </div>
     <p class="brand-kicker">Bem Brasil Restaurante</p>
@@ -120,135 +110,111 @@
 </div>
 
 <script>
-  /* ── Config ─────────────────────────────────────────── */
-  const API_BASE = '/api';
-  const TOKEN_KEY = 'admin-auth-token';
+  /* ── Configuração ── */
+  const API_BASE    = 'https://backend-production-1efdb.up.railway.app/api';
+  const TOKEN_KEY   = 'admin-auth-token';
 
-  /* ── Rate limiting de login (5 tentativas / 30s) ────── */
-  const LOGIN_RATE = { max: 5, blockMs: 30_000 };
-  let loginAttempts = 0;
-  let loginBlockedUntil = 0;
-  let loginCdInterval = null;
+  /* ── Rate limiting (5 tentativas / 30s) ── */
+  const RATE = { max: 5, blockMs: 30_000 };
+  let tentativas = 0, bloqueadoAte = 0, cdInterval = null;
+  const bloqueado = () => Date.now() < bloqueadoAte;
 
-  function loginIsBlocked() { return Date.now() < loginBlockedUntil; }
-
-  function registrarFalhaLogin() {
-    loginAttempts++;
-    if (loginAttempts >= LOGIN_RATE.max) {
-      loginBlockedUntil = Date.now() + LOGIN_RATE.blockMs;
-      iniciarContagemLogin();
-      setTimeout(() => { loginAttempts = 0; loginBlockedUntil = 0; }, LOGIN_RATE.blockMs);
-    }
-  }
-
-  function iniciarContagemLogin() {
+  function registrarFalha() {
+    tentativas++;
+    if (tentativas < RATE.max) return;
+    bloqueadoAte = Date.now() + RATE.blockMs;
     const banner = document.getElementById('lock-banner');
     const cd     = document.getElementById('lock-cd');
     banner.classList.add('visible');
     document.getElementById('btn-login').disabled = true;
-    let secsLeft = Math.ceil(LOGIN_RATE.blockMs / 1000);
-    cd.textContent = secsLeft;
-    clearInterval(loginCdInterval);
-    loginCdInterval = setInterval(() => {
-      secsLeft--;
-      cd.textContent = secsLeft;
-      if (secsLeft <= 0) {
-        clearInterval(loginCdInterval);
+    let s = Math.ceil(RATE.blockMs / 1000);
+    cd.textContent = s;
+    clearInterval(cdInterval);
+    cdInterval = setInterval(() => {
+      s--;
+      cd.textContent = s;
+      if (s <= 0) {
+        clearInterval(cdInterval);
         banner.classList.remove('visible');
+        tentativas = 0; bloqueadoAte = 0;
         document.getElementById('btn-login').disabled = false;
       }
     }, 1000);
   }
 
-  /* ── Verificar sessão existente (auto-redirect) ─────── */
-  async function verificarSessao() {
+  /* ── Token salvo ── */
+  function tokenSalvo() {
     try {
-      const res = await fetch(`${API_BASE}/session`, {
-        headers: { 'Authorization': `Bearer ${obterToken()}` }
-      });
-      if (res.ok) {
-        window.location.replace('admin.html');
+      const p = JSON.parse(localStorage.getItem(TOKEN_KEY) || '{}');
+      if (p.expires_at && p.expires_at < Math.floor(Date.now() / 1000)) {
+        localStorage.removeItem(TOKEN_KEY); return '';
       }
-    } catch (_) { /* sem sessão — continua na tela de login */ }
-  }
-
-  function obterToken() {
-    try {
-      const raw = localStorage.getItem(TOKEN_KEY);
-      if (!raw) return '';
-      return JSON.parse(raw)?.access_token ?? '';
+      return p.access_token || '';
     } catch (_) { return ''; }
   }
 
-  async function lerJsonSeguro(res) {
-    const texto = await res.text();
-    if (!texto) return {};
+  /* ── Redireciona se já logado ── */
+  (async () => {
+    const t = tokenSalvo();
+    if (!t) return;
     try {
-      return JSON.parse(texto);
-    } catch (_) {
-      return { error: 'Resposta inválida do servidor. Verifique se as rotas /api estão ativas.' };
-    }
-  }
+      const r = await fetch(`${API_BASE}/session`, { headers: { Authorization: `Bearer ${t}` } });
+      if (r.ok) window.location.replace('admin.html');
+    } catch (_) {}
+  })();
 
-  /* ── Login via Supabase Auth ────────────────────────── */
+  /* ── Login ── */
   async function fazerLogin() {
+    if (bloqueado()) return;
     const alerta = document.getElementById('alert-login');
     alerta.style.display = 'none';
-
-    if (loginIsBlocked()) return;
 
     const email = document.getElementById('adm-email').value.trim().toLowerCase();
     const senha = document.getElementById('adm-senha').value;
 
     if (!email || !senha) {
-      alerta.style.display = 'flex';
       document.getElementById('alert-login-msg').textContent = 'Preencha e-mail e senha.';
+      alerta.style.display = 'flex';
       return;
     }
 
     const btn = document.getElementById('btn-login');
     btn.disabled = true;
-    btn.innerHTML = '<i class="ti ti-loader-2"></i> Verificando...';
+    btn.innerHTML = '<i class="ti ti-loader-2 spin"></i> Verificando...';
 
     try {
-      const res = await fetch(`${API_BASE}/login`, {
-        method: 'POST',
+      const res  = await fetch(`${API_BASE}/login`, {
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password: senha })
+        body:    JSON.stringify({ email, senha }),
       });
+      const data = await res.json().catch(() => ({}));
 
-      const data = await lerJsonSeguro(res);
-
-      if (!res.ok || !data.access_token) {
-        registrarFalhaLogin();
-        throw new Error(data.error || 'E-mail ou senha incorretos. Verifique as credenciais.');
+      if (!res.ok) {
+        registrarFalha();
+        throw new Error(data.error || 'E-mail ou senha incorretos.');
       }
 
-      // Salva somente o token de sessao do usuario autenticado.
+      /* Salva apenas o token — nenhuma chave do Supabase no frontend */
       localStorage.setItem(TOKEN_KEY, JSON.stringify({
         access_token:  data.access_token,
         refresh_token: data.refresh_token,
-        expires_at:    Math.floor(Date.now() / 1000) + data.expires_in
+        expires_at:    data.expires_at,
       }));
 
-      // Redireciona para o painel (sem histórico — evita voltar com botão)
       window.location.replace('admin.html');
 
     } catch (err) {
-      alerta.style.display = 'flex';
       document.getElementById('alert-login-msg').textContent = err.message;
+      alerta.style.display = 'flex';
       btn.disabled = false;
       btn.innerHTML = '<i class="ti ti-login"></i> Entrar';
     }
   }
 
-  /* ── Enter no campo de senha ─────────────────────────── */
   document.getElementById('adm-senha').addEventListener('keydown', e => {
     if (e.key === 'Enter') fazerLogin();
   });
-
-  /* ── Verificar sessão ao carregar ───────────────────── */
-  verificarSessao();
 </script>
 </body>
 </html>
