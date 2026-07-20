@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Acesso Administrativo | Bem Brasil</title>
+  <title>Cadastro de Cliente | Bem Brasil</title>
   <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -12,197 +13,538 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <style>
     :root {
-      --bg: #0d5a22; --surface: rgba(21,94,38,0.92);
+      --bg: #0d5a22; --bg-2: #0f6a28;
+      --surface: rgba(21, 94, 38, 0.92); --surface-strong: #156224;
       --text: #f7f1d7; --muted: #bbd09b;
-      --line: rgba(201,160,54,0.26);
-      --accent: #d8ac32; --accent-2: #f1cf63;
+      --line: rgba(201, 160, 54, 0.26);
+      --accent: #d8ac32; --accent-2: #f1cf63; --accent-3: #8a6515;
       --danger: #ff806f;
-      --shadow: 0 24px 60px rgba(3,30,8,0.36);
+      --shadow: 0 24px 60px rgba(3, 30, 8, 0.36);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
       font-family: 'DM Sans', sans-serif; color: var(--text);
       background:
         radial-gradient(circle at top center, rgba(212,171,54,0.15), transparent 18%),
+        radial-gradient(circle at 20% 80%, rgba(241,207,99,0.08), transparent 22%),
         linear-gradient(180deg, #0a4d1c 0%, var(--bg) 36%, #084017 100%);
-      min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      padding: 1.5rem 1rem;
+      min-height: 100vh; display: flex; align-items: flex-start;
+      justify-content: center; padding: 0; position: relative; overflow-x: hidden;
     }
-    .wrap { max-width: 400px; width: 100%; }
-    .logo-area { text-align: center; margin-bottom: 1.75rem; }
-    .brand-mark { width: 72px; height: 72px; margin: 0 auto 0.8rem; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .brand-mark img { width: 100%; height: 100%; object-fit: contain; }
-    .brand-mark span { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 700; color: var(--accent); }
-    .brand-kicker { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.3rem; }
-    .page-title { font-size: 1.6rem; font-family: 'Playfair Display', serif; font-weight: 700; color: var(--text); }
-    .page-sub { font-size: 0.9rem; color: var(--muted); margin-top: 0.25rem; }
-    .card { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid var(--line); border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow); animation: fadeUp 0.7s ease both; }
-    .field { margin-bottom: 1.1rem; }
-    .field:last-of-type { margin-bottom: 0; }
-    .field label { display: flex; align-items: center; gap: 0.4rem; font-size: 0.76rem; color: var(--accent); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.5rem; }
-    .field input { width: 100%; padding: 0 14px; height: 44px; font-size: 1rem; background: #373132; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; color: #f5efe0; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
-    .field input:focus { border-color: rgba(216,172,50,0.65); box-shadow: 0 0 0 3px rgba(216,172,50,0.14); }
-    .btn-login { width: 100%; height: 48px; background: transparent; color: #fff; border: 1px solid var(--accent); border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.55rem; margin-top: 1.25rem; transition: filter 0.2s, transform 0.15s, opacity 0.2s; }
-    .btn-login:hover { filter: brightness(1.08); transform: translateY(-1px); background: rgba(216,172,50,0.08); }
-    .btn-login:active { transform: translateY(0) scale(0.99); }
-    .btn-login:disabled { opacity: 0.45; cursor: not-allowed; filter: none; transform: none; }
-    .alert-erro { background: rgba(255,140,120,0.1); border: 1px solid rgba(255,140,120,0.2); border-radius: 10px; padding: 10px 14px; font-size: 0.84rem; color: #ffd8d3; margin-top: 1rem; display: none; align-items: center; gap: 8px; }
-    .alert-erro i { flex-shrink: 0; }
-    .lock-banner { background: rgba(255,128,111,0.12); border: 1px solid rgba(255,128,111,0.28); border-radius: 10px; padding: 10px 14px; font-size: 0.84rem; color: #ffd8d3; margin-top: 1rem; display: none; align-items: center; gap: 8px; }
-    .lock-banner.visible { display: flex; }
-    .divider { border: none; border-top: 1px solid var(--line); margin: 1.25rem 0; }
-    .back-link { display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.88rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
-    .back-link:hover { color: var(--accent-2); }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spin { animation: spin 0.8s linear infinite; display: inline-block; }
+    body::before, body::after { content:''; position:fixed; inset:auto; border-radius:999px; filter:blur(4px); pointer-events:none; opacity:0.55; }
+    body::before { width:360px; height:360px; right:-140px; top:-80px; background:rgba(212,171,54,0.08); }
+    body::after  { width:260px; height:260px; left:-120px; bottom:-60px; background:rgba(255,255,255,0.04); }
+
+    .wrap { max-width:560px; width:100%; position:relative; z-index:1; min-height:100vh; padding:0 1rem 1.25rem; }
+
+    .logo-area { background:linear-gradient(180deg,#0f6b28 0%,#0d5a22 100%); border-bottom:3px solid var(--accent); padding:1.2rem 1rem 1.45rem; margin:0 -1rem 1.25rem; text-align:center; animation:fadeUp 0.7s ease both; }
+    .brand-mark { width:88px; height:88px; margin:0 auto 0.8rem; display:flex; align-items:center; justify-content:center; color:var(--accent); background:transparent; border:none; overflow:hidden; }
+    .brand-mark img { width:100%; height:100%; object-fit:contain; display:block; }
+    .brand-mark span { font-family:'Playfair Display',serif; font-size:2.15rem; font-weight:700; }
+    .brand-kicker { font-size:0.88rem; font-weight:700; letter-spacing:0.28em; text-transform:uppercase; color:var(--accent); margin-bottom:0.65rem; }
+    .form-title { font-size:clamp(1.7rem,4vw,2.2rem); font-family:'Playfair Display',serif; font-weight:700; letter-spacing:-0.03em; color:var(--text); }
+    .form-subtitle { font-size:1rem; color:#d6e7c6; margin-top:0.35rem; line-height:1.5; }
+
+    .progress { display:flex; gap:8px; justify-content:center; margin:0 0 1.1rem; animation:fadeUp 0.8s ease both; animation-delay:0.08s; }
+    .progress-dot { width:160px; height:8px; border-radius:999px; background:rgba(216,172,50,0.22); transition:all 0.25s ease; }
+    .progress-dot.active { background:linear-gradient(90deg,var(--accent-3) 0%,var(--accent) 55%,var(--accent-2) 100%); box-shadow:0 8px 18px rgba(216,172,50,0.24); }
+
+    .card { background:var(--surface); backdrop-filter:blur(12px); border:1px solid var(--line); border-radius:16px; padding:1.15rem; margin-bottom:1rem; box-shadow:var(--shadow); animation:fadeUp 0.85s ease both; }
+    .card:nth-of-type(2) { animation-delay:0.08s; }
+
+    .field { margin-bottom:1rem; }
+    .field:last-child { margin-bottom:0; }
+    .field label { display:flex; align-items:center; gap:0.45rem; font-size:0.76rem; color:var(--accent); margin-bottom:0.55rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; }
+    .field label i { font-size:1rem; color:var(--accent); }
+    .field input { width:100%; padding:0 14px; height:44px; font-size:1rem; background:#373132; border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#f5efe0; transition:border-color 0.2s,box-shadow 0.2s,transform 0.15s,background 0.2s; outline:none; box-shadow:inset 0 1px 0 rgba(255,255,255,0.08); -webkit-tap-highlight-color: transparent; }
+    .field input:focus { border-color:rgba(216,172,50,0.65); box-shadow:0 0 0 3px rgba(216,172,50,0.14); background:#3d3738; transform:translateY(-1px); }
+    .field input.error { border-color:var(--danger) !important; box-shadow:0 0 0 3px rgba(255,128,111,0.15) !important; }
+    .field input.valid { border-color:rgba(100,210,120,0.55); box-shadow:0 0 0 3px rgba(100,210,120,0.10); }
+    .err-msg { font-size:0.78rem; color:#ff9a8f; margin-top:0.38rem; display:none; align-items:center; gap:0.3rem; }
+    .err-msg.visible { display:flex; }
+    .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+    .privacy-note { font-size:0.8rem; color:var(--muted); text-align:center; margin-top:0.6rem; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem; width:100%; }
+    .privacy-note i { font-size:0.9rem; color:var(--accent); }
+
+    #turnstile-wrap { height:0; overflow:hidden; }
+
+    .captcha-status { display:flex; align-items:center; justify-content:center; gap:0.4rem; font-size:0.78rem; margin-top:0.5rem; min-height:20px; transition:opacity 0.3s; }
+    .captcha-status.verificando { color:var(--muted); }
+    .captcha-status.ok  { color:#80d4a0; }
+    .captcha-status.err { color:var(--danger); }
+
+    .submit-bar { margin-top:1.15rem; }
+    .btn-submit { width:100%; height:48px; background:transparent; color:#fff; border:1px solid var(--accent); border-radius:8px; font-size:1rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.55rem; transition:transform 0.15s,box-shadow 0.2s,filter 0.2s,opacity 0.2s; touch-action:manipulation; }
+    .btn-submit:not(:disabled):hover { filter:brightness(1.06); transform:translateY(-1px); background:rgba(216,172,50,0.08); }
+    .btn-submit:not(:disabled):active { transform:translateY(0) scale(0.99); }
+    .btn-submit:disabled { opacity:0.45; cursor:not-allowed; filter:none; transform:none; }
+
+    .alert-erro { background:rgba(255,140,120,0.1); border:1px solid rgba(255,140,120,0.2); border-radius:12px; padding:12px 14px; font-size:0.86rem; color:#ffd8d3; margin-top:1rem; align-items:center; gap:8px; display:none; }
+    .alert-erro i { font-size:1rem; flex-shrink:0; }
+
+    .rate-banner { background:rgba(255,128,111,0.12); border:1px solid rgba(255,128,111,0.28); border-radius:10px; padding:10px 14px; font-size:0.84rem; color:#ffd8d3; margin-top:1rem; display:none; align-items:center; gap:8px; }
+    .rate-banner.visible { display:flex; }
+    .rate-banner i { flex-shrink:0; }
+
+    .success-wrap { text-align:center; padding:3.5rem 1.25rem; display:none; background:rgba(15,100,34,0.92); backdrop-filter:blur(12px); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); animation:fadeUp 0.8s ease both; }
+    .success-circle { width:82px; height:82px; border-radius:50%; background:rgba(216,172,50,0.16); display:flex; align-items:center; justify-content:center; margin:0 auto 20px; }
+    .success-circle i { font-size:38px; color:var(--accent-2); }
+    .success-title { font-size:clamp(1.6rem,4vw,2rem); font-family:'Playfair Display',serif; font-weight:700; color:var(--text); margin-bottom:0.55rem; letter-spacing:-0.03em; }
+    .success-sub { font-size:1rem; color:#d2e0bf; line-height:1.7; }
+
+    .footer-social { display:flex; align-items:center; justify-content:center; gap:0.8rem; margin:1rem 0 0.25rem; padding:0.9rem 0 0; border-top:1px solid rgba(216,172,50,0.24); color:#d9e8c8; flex-wrap:wrap; }
+    .footer-social a { color:inherit; text-decoration:none; }
+    .footer-social .admin-access { width:40px; height:40px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.06); border:1px solid rgba(216,172,50,0.24); color:var(--accent-2); transition:transform 0.15s,background 0.15s; }
+    .footer-social .admin-access:hover { transform:translateY(-1px); background:rgba(216,172,50,0.16); }
+    .footer-social .social-link { display:inline-flex; align-items:center; gap:0.55rem; font-size:0.95rem; font-weight:700; }
+    .footer-social .social-icon { width:40px; height:40px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; background:rgba(216,172,50,0.14); border:1px solid rgba(216,172,50,0.32); transition:transform 0.15s,background 0.15s; }
+    .footer-social .social-icon i { font-size:1.05rem; color:var(--accent-2); }
+    .footer-social a:hover .social-icon { transform:translateY(-1px); background:rgba(216,172,50,0.22); }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes spin   { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+    .spin { animation:spin .8s linear infinite; display:inline-block; }
+
+    @media (max-width:540px) {
+      body { padding:0.8rem 0.7rem 1rem; align-items:stretch; }
+      .wrap { max-width:100%; }
+      .logo-area { padding:1rem 0.9rem 1.2rem; }
+      .brand-mark { width:82px; height:82px; margin-bottom:0.9rem; }
+      .brand-mark span { font-size:2rem; }
+      .form-title { font-size:clamp(1.55rem,7vw,1.95rem); }
+      .form-subtitle { font-size:0.9rem; padding:0 0.2rem; }
+      .progress { margin-bottom:0.95rem; }
+      .progress-dot { width:88px; height:7px; }
+      .card { padding:1rem; border-radius:16px; }
+      .field { margin-bottom:0.9rem; }
+      .field input { height:44px; font-size:0.96rem; }
+      .row2 { grid-template-columns:1fr; gap:0.9rem; }
+      .success-wrap { padding:2.6rem 1rem; border-radius:18px; }
+      .success-circle { width:72px; height:72px; }
+      .success-circle i { font-size:32px; }
+      #form-wrap { padding-bottom:88px; }
+      .submit-bar {
+        position:fixed; left:0; right:0; bottom:0; margin-top:0;
+        padding:0.7rem 0.9rem calc(0.7rem + env(safe-area-inset-bottom));
+        background:linear-gradient(180deg, rgba(13,90,34,0) 0%, rgba(13,90,34,0.94) 30%, var(--bg-2) 100%);
+        backdrop-filter:blur(8px);
+        border-top:1px solid var(--line);
+        z-index:60;
+      }
+      .btn-submit { height:50px; font-size:0.98rem; }
+    }
   </style>
 </head>
 <body>
+
 <div class="wrap">
   <div class="logo-area">
-    <div class="brand-mark">
-      <img src="logo.png" alt="Bem Brasil"
+    <div class="brand-mark" aria-label="Bem Brasil Restaurante">
+      <img src="logo.png" alt="Logo Bem Brasil"
            onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
       <span style="display:none;">BB</span>
     </div>
     <p class="brand-kicker">Bem Brasil Restaurante</p>
-    <p class="page-title">Painel Administrativo</p>
-    <p class="page-sub">Acesso restrito a usuários autorizados.</p>
+    <p class="form-title">Complete seu cadastro</p>
+    <p class="form-subtitle">Preencha os dados abaixo para continuar seu atendimento no Bem Brasil.</p>
   </div>
 
-  <div class="card">
-    <div class="field">
-      <label for="adm-email"><i class="ti ti-mail"></i> E-mail</label>
-      <input type="email" id="adm-email" placeholder="admin@bembrasil.com" autocomplete="username" />
-    </div>
-    <div class="field">
-      <label for="adm-senha"><i class="ti ti-lock"></i> Senha</label>
-      <input type="password" id="adm-senha" placeholder="••••••••" autocomplete="current-password" />
+  <div class="progress">
+    <div class="progress-dot active" id="d1"></div>
+    <div class="progress-dot" id="d2"></div>
+    <div class="progress-dot" id="d3"></div>
+  </div>
+
+  <div id="form-wrap">
+    <div class="card">
+      <div class="field" style="margin-bottom:1.1rem;">
+        <label><i class="ti ti-user-circle"></i> Dados pessoais</label>
+      </div>
+      <div class="field">
+        <label for="nome"><i class="ti ti-user"></i> Nome completo</label>
+        <input type="text" id="nome" placeholder="Ex: Maria Silva" autocomplete="name" maxlength="60" />
+        <div class="err-msg" id="e-nome"><i class="ti ti-alert-circle"></i> Digite seu nome completo (nome e sobrenome).</div>
+      </div>
+      <div class="field">
+        <label for="email"><i class="ti ti-mail"></i> E-mail</label>
+        <input type="email" id="email" placeholder="Ex: maria@email.com" autocomplete="email" inputmode="email" />
+        <div class="err-msg" id="e-email"><i class="ti ti-alert-circle"></i> Digite um e-mail válido.</div>
+      </div>
     </div>
 
-    <div class="lock-banner" id="lock-banner">
-      <i class="ti ti-shield-lock"></i>
-      <span>Muitas tentativas. Aguarde <b id="lock-cd">30</b>s antes de tentar novamente.</span>
+    <div class="card">
+      <div class="field" style="margin-bottom:1.1rem;">
+        <label><i class="ti ti-id"></i> Informações adicionais</label>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="nasc"><i class="ti ti-calendar"></i> Data de nascimento</label>
+          <input type="date" id="nasc" />
+          <div class="err-msg" id="e-nasc"><i class="ti ti-alert-circle"></i> <span id="e-nasc-text">Data inválida.</span></div>
+        </div>
+        <div class="field">
+          <label for="tel"><i class="ti ti-phone"></i> Telefone</label>
+          <input type="tel" id="tel" placeholder="(11) 99999-9999" maxlength="15" inputmode="numeric" />
+          <div class="err-msg" id="e-tel"><i class="ti ti-alert-circle"></i> Telefone inválido.</div>
+        </div>
+      </div>
     </div>
 
-    <div class="alert-erro" id="alert-login">
+    <p class="privacy-note">
+      <i class="ti ti-lock"></i> Seus dados estão protegidos e não serão compartilhados.
+    </p>
+
+    <div id="turnstile-wrap"></div>
+    <div class="captcha-status verificando" id="captcha-status">
+      <i class="ti ti-shield"></i>
+      <span id="captcha-msg">Verificando segurança...</span>
+    </div>
+
+    <div class="rate-banner" id="rate-banner">
+      <i class="ti ti-clock"></i>
+      <span>Aguarde <b id="rate-countdown">30</b>s antes de tentar novamente.</span>
+    </div>
+
+    <div class="alert-erro" id="alert-erro">
       <i class="ti ti-alert-circle"></i>
-      <span id="alert-login-msg">Credenciais inválidas.</span>
+      <span id="alert-erro-msg">Erro ao salvar. Tente novamente.</span>
     </div>
 
-    <button class="btn-login" id="btn-login" onclick="fazerLogin()">
-      <i class="ti ti-login"></i> Entrar
-    </button>
-
-    <hr class="divider" />
-    <a href="index.html" class="back-link"><i class="ti ti-arrow-left"></i> Voltar ao cadastro</a>
+    <div class="submit-bar">
+      <button class="btn-submit" id="btn" onclick="enviar()" disabled>
+        <i class="ti ti-check"></i> Confirmar cadastro
+      </button>
+    </div>
   </div>
+
+  <div class="success-wrap" id="success">
+    <div class="success-circle"><i class="ti ti-check"></i></div>
+    <p class="success-title">Cadastro realizado!</p>
+    <p class="success-sub">Obrigado pelo cadastro.<br>Suas informações foram salvas com sucesso no Bem Brasil.</p>
+  </div>
+
+  <footer class="footer-social" aria-label="Redes sociais do Bem Brasil">
+    <a class="social-link" href="https://www.instagram.com/oficialbembrasil/"
+       target="_blank" rel="noopener noreferrer">
+      <span class="social-icon"><i class="ti ti-brand-instagram"></i></span>
+      <span>@oficialbembrasil</span>
+    </a>
+    <a class="admin-access" href="login.html" title="Painel administrativo">
+      <i class="ti ti-shield-lock"></i>
+    </a>
+  </footer>
 </div>
 
 <script>
-  const API_BASE  = 'https://backend-cadastro-two.vercel.app/api';
-  const TOKEN_KEY = 'admin-auth-token';
+  /* ── Config ── */
+  const API_BASE = 'https://backend-cadastro-two.vercel.app/api';
+  const TURNSTILE_PROD_KEY = '0x4AAAAAADlf9vRTQc1wPg0l';
+  const TURNSTILE_TEST_KEY = '1x00000000000000000000BB';
+  const IS_LOCAL           = ['localhost','127.0.0.1','0.0.0.0'].includes(location.hostname);
+  const TURNSTILE_KEY      = IS_LOCAL ? TURNSTILE_TEST_KEY : TURNSTILE_PROD_KEY;
+  const IDADE_MINIMA       = 18;
 
-  const RATE = { max: 5, blockMs: 30_000 };
-  let tentativas = 0, bloqueadoAte = 0, cdInterval = null;
-  const bloqueado = () => Date.now() < bloqueadoAte;
+  let turnstileToken  = '';
+  let turnstileWidget = null;
+  let widgetRendered  = false;
+  const fieldState    = { nome: false, email: false, nasc: false, tel: false };
 
-  function registrarFalha() {
-    tentativas++;
-    if (tentativas < RATE.max) return;
-    bloqueadoAte = Date.now() + RATE.blockMs;
-    const banner = document.getElementById('lock-banner');
-    const cd     = document.getElementById('lock-cd');
-    banner.classList.add('visible');
-    document.getElementById('btn-login').disabled = true;
-    let s = Math.ceil(RATE.blockMs / 1000);
-    cd.textContent = s;
-    clearInterval(cdInterval);
-    cdInterval = setInterval(() => {
-      s--;
-      cd.textContent = s;
-      if (s <= 0) {
-        clearInterval(cdInterval);
-        banner.classList.remove('visible');
-        tentativas = 0; bloqueadoAte = 0;
-        document.getElementById('btn-login').disabled = false;
-      }
-    }, 1000);
-  }
-
-  function tokenSalvo() {
-    try {
-      const p = JSON.parse(localStorage.getItem(TOKEN_KEY) || '{}');
-      if (p.expires_at && p.expires_at < Math.floor(Date.now() / 1000)) {
-        localStorage.removeItem(TOKEN_KEY); return '';
-      }
-      return p.access_token || '';
-    } catch (_) { return ''; }
-  }
-
-  (async () => {
-    const t = tokenSalvo();
-    if (!t) return;
-    try {
-      const r = await fetch(`${API_BASE}/session`, {
-        headers: { Authorization: `Bearer ${t}` },
-      });
-      if (r.ok) window.location.replace('admin.html');
-    } catch (_) {}
+  /* ── Limites do campo de data ── */
+  (function configurarNasc() {
+    const inp = document.getElementById('nasc');
+    if (!inp) return;
+    const hoje = new Date();
+    const max  = new Date(hoje.getFullYear() - IDADE_MINIMA, hoje.getMonth(), hoje.getDate());
+    const min  = new Date(hoje.getFullYear() - 120, hoje.getMonth(), hoje.getDate());
+    const fmt  = d => d.toISOString().split('T')[0];
+    inp.max = fmt(max);
+    inp.min = fmt(min);
   })();
 
-  async function fazerLogin() {
-    if (bloqueado()) return;
-    const alerta = document.getElementById('alert-login');
+  /* ── Turnstile ── */
+  window.onloadTurnstileCallback = function () {
+    if (!window.turnstile || widgetRendered) return;
+    widgetRendered = true;
+    turnstileWidget = turnstile.render('#turnstile-wrap', {
+      sitekey:   TURNSTILE_KEY,
+      theme:     'dark',
+      size:      'invisible',
+      execution: 'render',
+      callback: function (token) {
+        turnstileToken = token;
+        setCaptchaStatus('ok', 'Verificação concluída');
+        atualizarBotao();
+      },
+      'error-callback': function (cod) {
+        turnstileToken = '';
+        const msg = cod === '110200'
+          ? 'Domínio não autorizado. Contate o suporte.'
+          : `Falha na verificação (${cod || '?'}). Recarregue a página.`;
+        setCaptchaStatus('err', msg);
+        atualizarBotao();
+      },
+      'expired-callback': function () {
+        turnstileToken = '';
+        setCaptchaStatus('verificando', 'Verificação expirada. Renovando...');
+        atualizarBotao();
+        renovarTurnstile();
+      }
+    });
+  };
+
+  function renovarTurnstile() {
+    if (turnstileWidget === null || !window.turnstile) return;
+    try { turnstile.reset(turnstileWidget); } catch (_) {}
+  }
+
+  function setCaptchaStatus(tipo, msg) {
+    const el   = document.getElementById('captcha-status');
+    const tx   = document.getElementById('captcha-msg');
+    const icon = el.querySelector('i');
+    el.className   = 'captcha-status ' + tipo;
+    tx.textContent = msg;
+    icon.className = tipo === 'ok'  ? 'ti ti-shield-check'
+                   : tipo === 'err' ? 'ti ti-shield-x'
+                   : 'ti ti-shield';
+  }
+
+  function carregarTurnstile() {
+    if (document.querySelector('script[src*="turnstile"]')) return;
+    const s   = document.createElement('script');
+    s.src     = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit';
+    s.async   = true;
+    s.defer   = true;
+    s.onerror = () => setCaptchaStatus('err', 'Falha ao carregar verificação. Recarregue a página.');
+    document.head.appendChild(s);
+  }
+
+  /* ── Rate limit ── */
+  const RATE = { max: 3, blockMs: 30_000 };
+  let attempts = 0, blockedUntil = 0, rateCdInterval = null;
+  function isBlocked() { return Date.now() < blockedUntil; }
+
+  function registrarTentativa() {
+    attempts++;
+    if (attempts >= RATE.max) {
+      blockedUntil = Date.now() + RATE.blockMs;
+      const banner = document.getElementById('rate-banner');
+      const cd     = document.getElementById('rate-countdown');
+      banner.classList.add('visible');
+      document.getElementById('btn').disabled = true;
+      let s = Math.ceil(RATE.blockMs / 1000);
+      cd.textContent = s;
+      clearInterval(rateCdInterval);
+      rateCdInterval = setInterval(() => {
+        s--;
+        cd.textContent = s;
+        if (s <= 0) {
+          clearInterval(rateCdInterval);
+          banner.classList.remove('visible');
+          attempts = 0; blockedUntil = 0;
+          atualizarBotao();
+        }
+      }, 1000);
+    }
+  }
+
+  /* ── Validadores ── */
+  function validarNome(v) {
+    v = v.trim();
+    if (!v || v.length > 60) return false;
+    if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(v)) return false;
+    return v.split(/\s+/).filter(p => p.length >= 2).length >= 2;
+  }
+
+  function validarEmail(v) {
+    v = v.trim();
+    if (!v || v.includes('..') || v.startsWith('.') || /\.@/.test(v)) return false;
+    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(v);
+  }
+
+  function idadeAnos(ano, mes, dia) {
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const nasc = new Date(ano, mes - 1, dia);
+    let idade  = hoje.getFullYear() - nasc.getFullYear();
+    if (hoje.getMonth() < nasc.getMonth() ||
+       (hoje.getMonth() === nasc.getMonth() && hoje.getDate() < nasc.getDate())) idade--;
+    return idade;
+  }
+
+  function avaliarNasc(v) {
+    if (!v) return { ok: false, msg: 'Selecione sua data de nascimento.' };
+    const [ano, mes, dia] = v.split('-').map(Number);
+    if (!ano || !mes || !dia) return { ok: false, msg: 'Data inválida.' };
+    const d    = new Date(ano, mes - 1, dia);
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    if (d.getFullYear() !== ano || d.getMonth() !== mes - 1 || d.getDate() !== dia)
+      return { ok: false, msg: 'Data inválida.' };
+    if (d > hoje) return { ok: false, msg: 'A data não pode ser no futuro.' };
+    const min = new Date(hoje); min.setFullYear(min.getFullYear() - 120);
+    if (d < min) return { ok: false, msg: 'Data inválida.' };
+    if (idadeAnos(ano, mes, dia) < IDADE_MINIMA)
+      return { ok: false, msg: `É necessário ter ${IDADE_MINIMA} anos ou mais para se cadastrar.` };
+    return { ok: true, msg: '' };
+  }
+
+  function validarTel(v) {
+    const d = v.replace(/\D/g, '');
+    if (d.length !== 10 && d.length !== 11) return false;
+    const ddd  = parseInt(d.slice(0, 2), 10);
+    const ddds = [11,12,13,14,15,16,17,18,19,21,22,24,27,28,31,32,33,34,35,37,38,
+                  41,42,43,44,45,46,47,48,49,51,53,54,55,61,62,63,64,65,66,67,68,69,
+                  71,73,74,75,77,79,81,82,83,84,85,86,87,88,89,91,92,93,94,95,96,97,98,99];
+    if (!ddds.includes(ddd)) return false;
+    const num = d.slice(2);
+    if (d.length === 11 && num[0] !== '9') return false;
+    if (/^(\d)\1+$/.test(d) || /^(\d)\1+$/.test(num)) return false;
+    return num !== '12345678' && num !== '987654321';
+  }
+
+  /* ── Máscara telefone ── */
+  document.getElementById('tel').addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length <= 10) {
+      v = v.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
+    } else {
+      v = v.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
+    }
+    this.value = v;
+    marcarTocado('tel'); validateField('tel');
+  });
+
+  /* ── UI helpers ── */
+  function setFieldError(id, isError) {
+    const inp = document.getElementById(id);
+    const msg = document.getElementById('e-' + id);
+    if (!inp || !msg) return;
+    inp.classList.toggle('error', isError);
+    inp.classList.toggle('valid', !isError);
+    msg.classList.toggle('visible', isError);
+  }
+
+  function clearField(id) {
+    const inp = document.getElementById(id);
+    const msg = document.getElementById('e-' + id);
+    if (inp) inp.classList.remove('error', 'valid');
+    if (msg) msg.classList.remove('visible');
+  }
+
+  function validateField(id) {
+    const inp = document.getElementById(id);
+    if (!inp) return;
+    const v       = inp.value;
+    const isEmpty = v.trim() === '';
+    let ok = false;
+    if (id === 'nome')  ok = validarNome(v);
+    if (id === 'email') ok = validarEmail(v);
+    if (id === 'tel')   ok = validarTel(v);
+    if (id === 'nasc') {
+      const r = avaliarNasc(v);
+      ok = r.ok;
+      const txt = document.getElementById('e-nasc-text');
+      if (txt) txt.textContent = r.msg || 'Data inválida.';
+    }
+    fieldState[id] = ok;
+    if (isEmpty && !inp.dataset.touched) clearField(id);
+    else setFieldError(id, !ok);
+    atualizarBotao();
+  }
+
+  function marcarTocado(id) {
+    const inp = document.getElementById(id);
+    if (inp) inp.dataset.touched = '1';
+  }
+
+  function atualizarBotao() {
+    const ok = Object.values(fieldState).every(Boolean) && !!turnstileToken && !isBlocked();
+    document.getElementById('btn').disabled = !ok;
+  }
+
+  ['nome','email','nasc','tel'].forEach(id => {
+    const inp = document.getElementById(id);
+    if (!inp) return;
+    inp.addEventListener('input', () => { marcarTocado(id); validateField(id); });
+    inp.addEventListener('blur',  () => { marcarTocado(id); validateField(id); });
+  });
+
+  /* ── Envio ── */
+  async function enviar() {
+    const alerta = document.getElementById('alert-erro');
     alerta.style.display = 'none';
 
-    const email = document.getElementById('adm-email').value.trim().toLowerCase();
-    const senha = document.getElementById('adm-senha').value;
+    if (isBlocked()) return;
 
-    if (!email || !senha) {
-      document.getElementById('alert-login-msg').textContent = 'Preencha e-mail e senha.';
+    if (!turnstileToken) {
       alerta.style.display = 'flex';
+      document.getElementById('alert-erro-msg').textContent = 'Verificação de segurança pendente. Aguarde.';
       return;
     }
 
-    const btn = document.getElementById('btn-login');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="ti ti-loader-2 spin"></i> Verificando...';
+    ['nome','email','nasc','tel'].forEach(id => { marcarTocado(id); validateField(id); });
+    if (!Object.values(fieldState).every(Boolean)) {
+      alerta.style.display = 'flex';
+      document.getElementById('alert-erro-msg').textContent = 'Corrija os campos destacados antes de continuar.';
+      return;
+    }
+
+    const nome  = document.getElementById('nome').value.trim();
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const nasc  = document.getElementById('nasc').value;
+    const tel   = document.getElementById('tel').value;
+
+    const btn = document.getElementById('btn');
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="ti ti-loader-2 spin"></i> Salvando...';
 
     try {
-      const res  = await fetch(`${API_BASE}/login`, {
+      const res = await fetch(`${API_BASE}/cadastros`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ email, senha }),
+        body:    JSON.stringify({ nome, email, data_nascimento: nasc, telefone: tel, turnstileToken }),
       });
+
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        registrarFalha();
-        throw new Error(data.error || 'E-mail ou senha incorretos.');
+        if (res.status === 409) throw new Error('Este usuário já possui um cadastro em nosso sistema.');
+        throw new Error(data.error || `Erro ao salvar (HTTP ${res.status}).`);
       }
 
-      localStorage.setItem(TOKEN_KEY, JSON.stringify({
-        access_token:  data.access_token,
-        refresh_token: data.refresh_token,
-        expires_at:    data.expires_at,
-      }));
-
-      window.location.replace('admin.html');
+      ['d1','d2','d3'].forEach(id => document.getElementById(id).classList.add('active'));
+      setTimeout(() => {
+        document.getElementById('form-wrap').style.display = 'none';
+        document.getElementById('success').style.display   = 'block';
+      }, 400);
 
     } catch (err) {
-      document.getElementById('alert-login-msg').textContent = err.message;
+      // Log detalhado para debug (visível no console do navegador/Vercel)
+      console.error('[ERRO CADASTRO]', {
+        message: err.message,
+        type:    err.constructor?.name,
+        url:     `${API_BASE}/cadastros`,
+        time:    new Date().toISOString(),
+      });
+
+      // Mensagem amigável para o usuário — sem referências a localhost
+      let mensagem = err.message;
+      if (err instanceof TypeError || err.message?.toLowerCase().includes('fetch')) {
+        mensagem = 'Não foi possível conectar ao servidor. Tente novamente em alguns instantes. Se o problema persistir, entre em contato com o suporte.';
+      }
+
+      document.getElementById('alert-erro-msg').textContent = mensagem;
       alerta.style.display = 'flex';
-      btn.disabled = false;
-      btn.innerHTML = '<i class="ti ti-login"></i> Entrar';
+      registrarTentativa();
+      turnstileToken = '';
+      renovarTurnstile();
+      setCaptchaStatus('verificando', 'Renovando verificação...');
+      btn.disabled  = false;
+      btn.innerHTML = '<i class="ti ti-check"></i> Confirmar cadastro';
     }
   }
 
-  document.getElementById('adm-senha').addEventListener('keydown', e => {
-    if (e.key === 'Enter') fazerLogin();
-  });
+  carregarTurnstile();
 </script>
 </body>
 </html>
