@@ -235,7 +235,10 @@
       window.location.replace('admin.html');
 
     } catch (err) {
-      document.getElementById('alert-login-msg').textContent = err.message;
+      document.getElementById('alert-login-msg').textContent =
+        err instanceof TypeError
+          ? 'O navegador bloqueou a conexão com a API. Acesse pelo domínio publicado autorizado ou libere este domínio no CORS do backend.'
+          : err.message;
       alerta.style.display = 'flex';
       btn.disabled = false;
       btn.innerHTML = '<i class="ti ti-login"></i> Entrar';
