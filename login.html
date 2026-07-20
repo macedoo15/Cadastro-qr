@@ -111,8 +111,8 @@
 
 <script>
   /* ── Configuração ── */
-  const API_BASE    = 'https://backend-cadastro-two.vercel.app/api';
-  const TOKEN_KEY   = 'admin-auth-token';
+  const API_BASE  = '/api';   // mesmo domínio — sem CORS
+  const TOKEN_KEY = 'admin-auth-token';
 
   /* ── Rate limiting (5 tentativas / 30s) ── */
   const RATE = { max: 5, blockMs: 30_000 };
@@ -195,7 +195,6 @@
         throw new Error(data.error || 'E-mail ou senha incorretos.');
       }
 
-      /* Salva apenas o token — nenhuma chave do Supabase no frontend */
       localStorage.setItem(TOKEN_KEY, JSON.stringify({
         access_token:  data.access_token,
         refresh_token: data.refresh_token,
