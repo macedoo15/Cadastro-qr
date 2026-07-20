@@ -57,6 +57,7 @@
     .field:last-child { margin-bottom:0; }
     .field label { display:flex; align-items:center; gap:0.45rem; font-size:0.76rem; color:var(--accent); margin-bottom:0.55rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; }
     .field label i { font-size:1rem; color:var(--accent); }
+    .field-hint { font-size:0.72rem; color:var(--muted); margin-top:0.32rem; }
     .field input { width:100%; padding:0 14px; height:44px; font-size:1rem; background:#373132; border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#f5efe0; transition:border-color 0.2s,box-shadow 0.2s,transform 0.15s,background 0.2s; outline:none; box-shadow:inset 0 1px 0 rgba(255,255,255,0.08); -webkit-tap-highlight-color: transparent; }
     .field input:focus { border-color:rgba(216,172,50,0.65); box-shadow:0 0 0 3px rgba(216,172,50,0.14); background:#3d3738; transform:translateY(-1px); }
     .field input.error { border-color:var(--danger) !important; box-shadow:0 0 0 3px rgba(255,128,111,0.15) !important; }
@@ -68,6 +69,7 @@
     .privacy-note { font-size:0.8rem; color:var(--muted); text-align:center; margin-top:0.6rem; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem; width:100%; }
     .privacy-note i { font-size:0.9rem; color:var(--accent); }
 
+    /* Turnstile invisível — ocupa espaço zero */
     #turnstile-wrap { height:0; overflow:hidden; }
 
     .captcha-status { display:flex; align-items:center; justify-content:center; gap:0.4rem; font-size:0.78rem; margin-top:0.5rem; min-height:20px; transition:opacity 0.3s; }
@@ -124,6 +126,8 @@
       .success-wrap { padding:2.6rem 1rem; border-radius:18px; }
       .success-circle { width:72px; height:72px; }
       .success-circle i { font-size:32px; }
+
+      /* Botão de envio fixo no rodapé — sempre visível e fácil de tocar */
       #form-wrap { padding-bottom:88px; }
       .submit-bar {
         position:fixed; left:0; right:0; bottom:0; margin-top:0;
@@ -196,6 +200,7 @@
       <i class="ti ti-lock"></i> Seus dados estão protegidos e não serão compartilhados.
     </p>
 
+    <!-- Widget Turnstile invisível -->
     <div id="turnstile-wrap"></div>
     <div class="captcha-status verificando" id="captcha-status">
       <i class="ti ti-shield"></i>
@@ -239,39 +244,42 @@
 
 <script>
   /* ── Config ── */
-  const API_BASE = 'https://backend-cadastro-two.vercel.app/api';
+  const API_BASE          = 'https://backend-production-1efdb.up.railway.app/api';
   const TURNSTILE_PROD_KEY = '0x4AAAAAADlf9vRTQc1wPg0l';
   const TURNSTILE_TEST_KEY = '1x00000000000000000000BB';
   const IS_LOCAL           = ['localhost','127.0.0.1','0.0.0.0'].includes(location.hostname);
   const TURNSTILE_KEY      = IS_LOCAL ? TURNSTILE_TEST_KEY : TURNSTILE_PROD_KEY;
   const IDADE_MINIMA       = 18;
 
+  /* ── Estado ── */
   let turnstileToken  = '';
   let turnstileWidget = null;
   let widgetRendered  = false;
-  const fieldState    = { nome: false, email: false, nasc: false, tel: false };
 
-  /* ── Limites do campo de data ── */
+  const fieldState = { nome: false, email: false, nasc: false, tel: false };
+
+  /* ── Limites nativos do seletor de data (bloqueia futuro e menores de 18) ── */
   (function configurarNasc() {
     const inp = document.getElementById('nasc');
     if (!inp) return;
     const hoje = new Date();
-    const max  = new Date(hoje.getFullYear() - IDADE_MINIMA, hoje.getMonth(), hoje.getDate());
-    const min  = new Date(hoje.getFullYear() - 120, hoje.getMonth(), hoje.getDate());
-    const fmt  = d => d.toISOString().split('T')[0];
-    inp.max = fmt(max);
-    inp.min = fmt(min);
+    const limiteMax = new Date(hoje.getFullYear() - IDADE_MINIMA, hoje.getMonth(), hoje.getDate());
+    const limiteMin = new Date(hoje.getFullYear() - 120, hoje.getMonth(), hoje.getDate());
+    const fmt = d => d.toISOString().split('T')[0];
+    inp.max = fmt(limiteMax);
+    inp.min = fmt(limiteMin);
   })();
 
   /* ── Turnstile ── */
   window.onloadTurnstileCallback = function () {
     if (!window.turnstile || widgetRendered) return;
     widgetRendered = true;
+
     turnstileWidget = turnstile.render('#turnstile-wrap', {
       sitekey:   TURNSTILE_KEY,
       theme:     'dark',
       size:      'invisible',
-      execution: 'render',
+      execution: 'render',          // dispara automaticamente ao renderizar
       callback: function (token) {
         turnstileToken = token;
         setCaptchaStatus('ok', 'Verificação concluída');
@@ -303,19 +311,19 @@
     const el   = document.getElementById('captcha-status');
     const tx   = document.getElementById('captcha-msg');
     const icon = el.querySelector('i');
-    el.className   = 'captcha-status ' + tipo;
-    tx.textContent = msg;
-    icon.className = tipo === 'ok'  ? 'ti ti-shield-check'
-                   : tipo === 'err' ? 'ti ti-shield-x'
-                   : 'ti ti-shield';
+    el.className      = 'captcha-status ' + tipo;
+    tx.textContent    = msg;
+    icon.className    = tipo === 'ok' ? 'ti ti-shield-check'
+                      : tipo === 'err' ? 'ti ti-shield-x'
+                      : 'ti ti-shield';
   }
 
   function carregarTurnstile() {
     if (document.querySelector('script[src*="turnstile"]')) return;
-    const s   = document.createElement('script');
-    s.src     = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit';
-    s.async   = true;
-    s.defer   = true;
+    const s = document.createElement('script');
+    s.src   = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit';
+    s.async = true;
+    s.defer = true;
     s.onerror = () => setCaptchaStatus('err', 'Falha ao carregar verificação. Recarregue a página.');
     document.head.appendChild(s);
   }
@@ -364,34 +372,39 @@
   }
 
   function idadeAnos(ano, mes, dia) {
-    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
     const nasc = new Date(ano, mes - 1, dia);
-    let idade  = hoje.getFullYear() - nasc.getFullYear();
-    if (hoje.getMonth() < nasc.getMonth() ||
-       (hoje.getMonth() === nasc.getMonth() && hoje.getDate() < nasc.getDate())) idade--;
+    let idade = hoje.getFullYear() - nasc.getFullYear();
+    const aindaNaoFezAniversario =
+      (hoje.getMonth() < nasc.getMonth()) ||
+      (hoje.getMonth() === nasc.getMonth() && hoje.getDate() < nasc.getDate());
+    if (aindaNaoFezAniversario) idade--;
     return idade;
   }
 
+  // Retorna { ok, msg } para alimentar a mensagem de erro específica do campo
   function avaliarNasc(v) {
     if (!v) return { ok: false, msg: 'Selecione sua data de nascimento.' };
     const [ano, mes, dia] = v.split('-').map(Number);
     if (!ano || !mes || !dia) return { ok: false, msg: 'Data inválida.' };
-    const d    = new Date(ano, mes - 1, dia);
-    const hoje = new Date(); hoje.setHours(0,0,0,0);
-    if (d.getFullYear() !== ano || d.getMonth() !== mes - 1 || d.getDate() !== dia)
+    const d = new Date(ano, mes - 1, dia);
+    if (d.getFullYear() !== ano || d.getMonth() !== mes - 1 || d.getDate() !== dia) {
       return { ok: false, msg: 'Data inválida.' };
+    }
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
     if (d > hoje) return { ok: false, msg: 'A data não pode ser no futuro.' };
-    const min = new Date(hoje); min.setFullYear(min.getFullYear() - 120);
-    if (d < min) return { ok: false, msg: 'Data inválida.' };
-    if (idadeAnos(ano, mes, dia) < IDADE_MINIMA)
+    const limiteMin = new Date(hoje); limiteMin.setFullYear(limiteMin.getFullYear() - 120);
+    if (d < limiteMin) return { ok: false, msg: 'Data inválida.' };
+    if (idadeAnos(ano, mes, dia) < IDADE_MINIMA) {
       return { ok: false, msg: `É necessário ter ${IDADE_MINIMA} anos ou mais para se cadastrar.` };
+    }
     return { ok: true, msg: '' };
   }
 
   function validarTel(v) {
     const d = v.replace(/\D/g, '');
     if (d.length !== 10 && d.length !== 11) return false;
-    const ddd  = parseInt(d.slice(0, 2), 10);
+    const ddd = parseInt(d.slice(0, 2), 10);
     const ddds = [11,12,13,14,15,16,17,18,19,21,22,24,27,28,31,32,33,34,35,37,38,
                   41,42,43,44,45,46,47,48,49,51,53,54,55,61,62,63,64,65,66,67,68,69,
                   71,73,74,75,77,79,81,82,83,84,85,86,87,88,89,91,92,93,94,95,96,97,98,99];
@@ -437,15 +450,18 @@
     const v       = inp.value;
     const isEmpty = v.trim() === '';
     let ok = false;
+
     if (id === 'nome')  ok = validarNome(v);
     if (id === 'email') ok = validarEmail(v);
     if (id === 'tel')   ok = validarTel(v);
+
     if (id === 'nasc') {
       const r = avaliarNasc(v);
       ok = r.ok;
       const txt = document.getElementById('e-nasc-text');
       if (txt) txt.textContent = r.msg || 'Data inválida.';
     }
+
     fieldState[id] = ok;
     if (isEmpty && !inp.dataset.touched) clearField(id);
     else setFieldError(id, !ok);
@@ -495,14 +511,19 @@
     const tel   = document.getElementById('tel').value;
 
     const btn = document.getElementById('btn');
-    btn.disabled  = true;
+    btn.disabled = true;
     btn.innerHTML = '<i class="ti ti-loader-2 spin"></i> Salvando...';
 
     try {
       const res = await fetch(`${API_BASE}/cadastros`, {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ nome, email, data_nascimento: nasc, telefone: tel, turnstileToken }),
+        body: JSON.stringify({
+          nome, email,
+          data_nascimento: nasc,
+          telefone: tel,
+          turnstileToken
+        })
       });
 
       const data = await res.json().catch(() => ({}));
@@ -519,32 +540,22 @@
       }, 400);
 
     } catch (err) {
-      // Log detalhado para debug (visível no console do navegador/Vercel)
-      console.error('[ERRO CADASTRO]', {
-        message: err.message,
-        type:    err.constructor?.name,
-        url:     `${API_BASE}/cadastros`,
-        time:    new Date().toISOString(),
-      });
-
-      // Mensagem amigável para o usuário — sem referências a localhost
-      let mensagem = err.message;
-      if (err instanceof TypeError || err.message?.toLowerCase().includes('fetch')) {
-        mensagem = 'Não foi possível conectar ao servidor. Tente novamente em alguns instantes. Se o problema persistir, entre em contato com o suporte.';
-      }
-
-      document.getElementById('alert-erro-msg').textContent = mensagem;
+      document.getElementById('alert-erro-msg').textContent =
+        err instanceof TypeError
+          ? 'Servidor indisponível. Rode node server.js e acesse http://127.0.0.1:3000.'
+          : err.message;
       alerta.style.display = 'flex';
       registrarTentativa();
       turnstileToken = '';
       renovarTurnstile();
       setCaptchaStatus('verificando', 'Renovando verificação...');
-      btn.disabled  = false;
+      btn.disabled = false;
       btn.innerHTML = '<i class="ti ti-check"></i> Confirmar cadastro';
     }
   }
 
   carregarTurnstile();
 </script>
+
 </body>
 </html>
