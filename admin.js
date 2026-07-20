@@ -3,7 +3,7 @@
 //  Nenhuma chave, nenhuma lógica de negócio, nenhum Supabase
 // ============================================================
 
-const API_BASE = '/api';   // mesmo domínio — sem CORS
+const API_BASE = 'https://backend-cadastro-two.vercel.app/api';
 const TOKEN_KEY   = 'admin-auth-token';
 const POR_PAGINA  = 10;
 
