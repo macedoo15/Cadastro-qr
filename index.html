@@ -244,7 +244,7 @@
 
 <script>
   /* ── Config ── */
-  const API_BASE          = 'https://backend-production-1efdb.up.railway.app/api';
+  const API_BASE          = 'https://backend-cadastro-two.vercel.app/api';
   const TURNSTILE_PROD_KEY = '0x4AAAAAADlf9vRTQc1wPg0l';
   const TURNSTILE_TEST_KEY = '1x00000000000000000000BB';
   const IS_LOCAL           = ['localhost','127.0.0.1','0.0.0.0'].includes(location.hostname);
@@ -542,7 +542,7 @@
     } catch (err) {
       document.getElementById('alert-erro-msg').textContent =
         err instanceof TypeError
-          ? 'Servidor indisponível. Rode node server.js e acesse http://127.0.0.1:3000.'
+          ? 'Não foi possível conectar ao servidor. Acesse pelo domínio publicado autorizado ou libere este domínio no CORS do backend.'
           : err.message;
       alerta.style.display = 'flex';
       registrarTentativa();
