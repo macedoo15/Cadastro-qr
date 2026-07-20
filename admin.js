@@ -15,13 +15,47 @@ let ordemAsc       = false;
 const filtrosAtivos = { periodo: null, aniv: null };
 
 /* ── Token ── */
+function normalizarSessao(data) {
+  data = data && typeof data === 'object' ? data : {};
+
+  const accessToken =
+    data.access_token ||
+    data.token ||
+    data.jwt ||
+    data.session?.access_token ||
+    data.session?.token ||
+    '';
+
+  let expiresAt =
+    data.expires_at ||
+    data.expiresAt ||
+    data.exp ||
+    data.session?.expires_at ||
+    null;
+
+  if (typeof expiresAt === 'string') {
+    const parsedDate = Date.parse(expiresAt);
+    expiresAt = Number.isNaN(parsedDate) ? Number(expiresAt) : Math.floor(parsedDate / 1000);
+  }
+
+  if (typeof expiresAt === 'number' && expiresAt > 10_000_000_000) {
+    expiresAt = Math.floor(expiresAt / 1000);
+  }
+
+  return {
+    access_token: accessToken,
+    expires_at: Number.isFinite(expiresAt) ? expiresAt : null,
+  };
+}
+
 function obterToken() {
   try {
-    const p = JSON.parse(localStorage.getItem(TOKEN_KEY) || '{}');
+    const p = normalizarSessao(JSON.parse(localStorage.getItem(TOKEN_KEY) || '{}'));
+    if (!p.access_token) return '';
     if (p.expires_at && p.expires_at < Math.floor(Date.now() / 1000)) {
       localStorage.removeItem(TOKEN_KEY); return '';
     }
-    return p.access_token || '';
+    return p.access_token;
   } catch (_) { return ''; }
 }
 

@@ -412,15 +412,52 @@
   };
 
   /* ── Token / Sessão ── */
+  function normalizarSessao(data) {
+    data = data && typeof data === 'object' ? data : {};
+
+    const accessToken =
+      data.access_token ||
+      data.token ||
+      data.jwt ||
+      data.session?.access_token ||
+      data.session?.token ||
+      '';
+
+    let expiresAt =
+      data.expires_at ||
+      data.expiresAt ||
+      data.exp ||
+      data.session?.expires_at ||
+      null;
+
+    if (typeof expiresAt === 'string') {
+      const parsedDate = Date.parse(expiresAt);
+      expiresAt = Number.isNaN(parsedDate) ? Number(expiresAt) : Math.floor(parsedDate / 1000);
+    }
+
+    if (typeof expiresAt === 'number' && expiresAt > 10_000_000_000) {
+      expiresAt = Math.floor(expiresAt / 1000);
+    }
+
+    return {
+      access_token: accessToken,
+      expires_at: Number.isFinite(expiresAt) ? expiresAt : null,
+      email: data.email || data.user?.email || data.session?.user?.email || '',
+    };
+  }
+
   function obterToken() {
     try {
       const raw = localStorage.getItem(TOKEN_KEY);
       if (!raw) return null;
-      const parsed = JSON.parse(raw);
+      const parsed = normalizarSessao(JSON.parse(raw));
+      if (!parsed.access_token) {
+        localStorage.removeItem(TOKEN_KEY); return null;
+      }
       if (parsed.expires_at && parsed.expires_at < Math.floor(Date.now() / 1000)) {
         localStorage.removeItem(TOKEN_KEY); return null;
       }
-      return parsed.access_token ?? null;
+      return parsed.access_token;
     } catch (_) { return null; }
   }
   function limparSessao() { localStorage.removeItem(TOKEN_KEY); }
@@ -445,7 +482,8 @@
       document.getElementById('loading-overlay').classList.add('hidden');
       document.getElementById('topbar').style.display       = 'flex';
       document.getElementById('main-content').style.display = 'block';
-      document.getElementById('admin-email-badge').textContent = user.email ?? 'admin';
+      const sessaoSalva = normalizarSessao(JSON.parse(localStorage.getItem(TOKEN_KEY) || '{}'));
+      document.getElementById('admin-email-badge').textContent = user.email || sessaoSalva.email || 'admin';
       construirMesesGrid();
       await carregarCadastros();
     } catch (_) { limparSessao(); redirecionarLogin(); }

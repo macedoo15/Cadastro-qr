@@ -134,12 +134,54 @@
 
   function tokenSalvo() {
     try {
-      const p = JSON.parse(localStorage.getItem(TOKEN_KEY) || '{}');
-      if (p.expires_at && p.expires_at < Math.floor(Date.now() / 1000)) {
+      const sessao = normalizarSessao(JSON.parse(localStorage.getItem(TOKEN_KEY) || '{}'));
+      if (!sessao.access_token) return '';
+      if (sessao.expires_at && sessao.expires_at < Math.floor(Date.now() / 1000)) {
         localStorage.removeItem(TOKEN_KEY); return '';
       }
-      return p.access_token || '';
+      return sessao.access_token;
     } catch (_) { return ''; }
+  }
+
+  function normalizarSessao(data) {
+    data = data && typeof data === 'object' ? data : {};
+
+    const accessToken =
+      data.access_token ||
+      data.token ||
+      data.jwt ||
+      data.session?.access_token ||
+      data.session?.token ||
+      '';
+
+    const refreshToken =
+      data.refresh_token ||
+      data.refreshToken ||
+      data.session?.refresh_token ||
+      '';
+
+    let expiresAt =
+      data.expires_at ||
+      data.expiresAt ||
+      data.exp ||
+      data.session?.expires_at ||
+      null;
+
+    if (typeof expiresAt === 'string') {
+      const parsedDate = Date.parse(expiresAt);
+      expiresAt = Number.isNaN(parsedDate) ? Number(expiresAt) : Math.floor(parsedDate / 1000);
+    }
+
+    if (typeof expiresAt === 'number' && expiresAt > 10_000_000_000) {
+      expiresAt = Math.floor(expiresAt / 1000);
+    }
+
+    return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      expires_at: Number.isFinite(expiresAt) ? expiresAt : null,
+      email: data.email || data.user?.email || data.session?.user?.email || '',
+    };
   }
 
   (async () => {
@@ -182,11 +224,13 @@
         throw new Error(data.error || 'E-mail ou senha incorretos.');
       }
 
-      localStorage.setItem(TOKEN_KEY, JSON.stringify({
-        access_token:  data.access_token,
-        refresh_token: data.refresh_token,
-        expires_at:    data.expires_at,
-      }));
+      const sessao = normalizarSessao(data);
+
+      if (!sessao.access_token) {
+        throw new Error('Login aprovado, mas o servidor não retornou token de acesso.');
+      }
+
+      localStorage.setItem(TOKEN_KEY, JSON.stringify(sessao));
 
       window.location.replace('admin.html');
 
